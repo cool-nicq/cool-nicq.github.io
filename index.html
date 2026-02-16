@@ -3,87 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ratan Thapa - IT Professional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Ratan | Enterprise IT Solutions & Full-Stack Architect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --accent: #60a5fa;
+            --dark: #020617;
+            --glass: rgba(15, 23, 42, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: #fff; overflow-x: hidden; }
+
+        /* Navigation */
+        nav {
+            position: fixed; width: 100%; padding: 25px 8%; 
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: linear-gradient(to bottom, rgba(2,6,23,0.9), transparent);
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; color: var(--primary); }
+        .nav-links a { color: #cbd5e1; text-decoration: none; margin-left: 40px; font-weight: 500; transition: 0.3s; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Hero Section with Parallax Background */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(2, 6, 23, 0.7), rgba(2, 6, 23, 0.7)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            padding: 0 10%;
+        }
+        .hero h1 { font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+        .hero p { font-size: 1.4rem; color: #94a3b8; max-width: 800px; margin-bottom: 40px; }
+
+        /* Section Styling */
+        section { padding: 120px 8%; position: relative; }
+        .section-tag { color: var(--primary); text-transform: uppercase; letter-spacing: 3px; font-weight: 700; font-size: 0.8rem; margin-bottom: 15px; display: block; }
+        .section-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 60px; }
+
+        /* Infrastructure Section Background */
+        #infrastructure {
+            background: linear-gradient(rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.9)), 
+                        url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=2068');
+            background-size: cover; background-attachment: fixed;
+        }
+
+        /* Creative Section Background */
+        #creative {
+            background: linear-gradient(rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.9)), 
+                        url('https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=2071');
+            background-size: cover; background-attachment: fixed;
+        }
+
+        /* Glass Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            padding: 50px;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-card:hover { border-color: var(--primary); transform: translateY(-10px); background: rgba(30, 41, 59, 0.8); }
+        .glass-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 30px; }
+        .glass-card h3 { font-size: 1.8rem; margin-bottom: 20px; }
+        .glass-card ul { list-style: none; color: #94a3b8; }
+        .glass-card li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .glass-card li::before { content: '→'; color: var(--primary); font-weight: bold; }
+
+        /* Tech Stack Marquee (The "Huge" Wall of Logos/Icons) */
+        .tech-wall {
+            background: #0f172a;
+            padding: 60px 0;
+            display: flex; overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .tech-slide { display: flex; white-space: nowrap; animation: scroll 30s linear infinite; }
+        .tech-slide span { font-size: 1.2rem; font-weight: 700; color: #475569; margin: 0 40px; text-transform: uppercase; letter-spacing: 2px; }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* CTA */
+        .cta-box {
+            background: var(--primary);
+            padding: 80px;
+            border-radius: 40px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .btn-main {
+            background: #fff; color: var(--dark); padding: 20px 50px;
+            border-radius: 100px; text-decoration: none; font-weight: 800;
+            display: inline-block; transition: 0.3s; margin-top: 30px;
+        }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5); }
+
+        footer { padding: 60px; text-align: center; border-top: 1px solid var(--border); color: #475569; }
+
+        @media (max-width: 768px) {
+            .section-title { font-size: 2.5rem; }
+            .nav-links { display: none; }
+        }
+    </style>
 </head>
-<body class="font-sans bg-gray-900 text-white">
-    <!-- Header Section -->
-    <header class="bg-teal-600 py-6">
-        <div class="container mx-auto text-center px-4">
-            <h1 class="text-4xl font-bold">Ratan Thapa</h1>
-            <p class="text-lg mt-2">IT Professional | Laravel & API Developer | SEO & SMO Expert</p>
-            <a href="#contact" class="inline-block mt-4 bg-white text-teal-600 py-2 px-4 rounded hover:bg-gray-200">Get in Touch</a>
-        </div>
-    </header>
+<body>
 
-    <!-- About Section -->
-    <section class="py-12 bg-gray-800">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-semibold text-center mb-6">About Me</h2>
-            <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                I'm Ratan Thapa, an IT professional with expertise in network system administration, Laravel development, API integration, SEO, SMO, and blogging. 
-                I build robust, scalable web solutions and optimize digital presence for businesses and individuals.
-            </p>
-        </div>
-    </section>
+<nav>
+    <div class="logo">RATAN //</div>
+    <div class="nav-links">
+        <a href="#solutions">Software</a>
+        <a href="#infrastructure">Infrastructure</a>
+        <a href="#creative">Creative</a>
+        <a href="mailto:contact@ratan.com.np" style="color:var(--primary)">Contact_</a>
+    </div>
+</nav>
 
-    <!-- Services Section -->
-    <section class="py-12">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-semibold text-center mb-6">My Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 bg-gray-800 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-2">Laravel & API Development</h3>
-                    <p class="text-gray-400">Building secure, scalable web applications and APIs using Laravel and modern frameworks for seamless functionality.</p>
-                </div>
-                <div class="p-6 bg-gray-800 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-2">SEO & SMO</h3>
-                    <p class="text-gray-400">Optimizing websites and social media for higher rankings, engagement, and visibility to drive organic growth.</p>
-                </div>
-                <div class="p-6 bg-gray-800 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-2">Network Administration</h3>
-                    <p class="text-gray-400">Managing and securing network systems to ensure reliable performance and connectivity for businesses.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<section class="hero">
+    <h1>Systems Architect & <br><span style="color: var(--primary)">Full-Stack Developer.</span></h1>
+    <p>Bridging the gap between complex network infrastructure and high-performance software engineering.</p>
+    <a href="#solutions" class="btn-main">Explore Capabilities</a>
+</section>
 
-    <!-- Portfolio Section -->
-    <section class="py-12 bg-gray-800">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-semibold text-center mb-6">Portfolio</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="p-6 bg-gray-700 rounded-lg">
-                    <h3 class="text-xl font-bold mb-2">Custom Laravel Application</h3>
-                    <p class="text-gray-400">Developed a dynamic web app with Laravel, featuring user authentication and real-time API integration.</p>
-                </div>
-                <div class="p-6 bg-gray-700 rounded-lg">
-                    <h3 class="text-xl font-bold mb-2">SEO Campaign</h3>
-                    <p class="text-gray-400">Boosted a client’s website to top Google rankings through keyword optimization and content strategy.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="tech-wall">
+    <div class="tech-slide">
+        <span>MIKROTIK</span><span>CISCO</span><span>SOPHOS</span><span>LARAVEL</span>
+        <span>MYSQL</span><span>MSSQL</span><span>POSTFIX</span><span>EXCHANGE SERVER</span>
+        <span>LINUX SERVER</span><span>DOCKER</span><span>API INTEGRATION</span><span>SEO</span>
+        <span>MIKROTIK</span><span>CISCO</span><span>SOPHOS</span><span>LARAVEL</span>
+        <span>MYSQL</span><span>MSSQL</span><span>POSTFIX</span><span>EXCHANGE SERVER</span>
+    </div>
+</div>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-12">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-semibold mb-6">Contact Me</h2>
-            <p class="text-lg text-gray-300 mb-4">
-                Ready to collaborate on your next project? Reach out for expert IT solutions, from development to optimization.
-            </p>
-            <p class="text-gray-300">Email: ratan.thapa@example.com | Phone: +977-123-456-789</p>
-            <a href="https://linkedin.com/in/ratan-thapa" class="inline-block mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700">
-                Connect on LinkedIn
-            </a>
+<section id="solutions">
+    <span class="section-tag">Development Stack</span>
+    <h2 class="section-title">Enterprise <br>Software Engineering</h2>
+    <div class="grid">
+        <div class="glass-card">
+            <i class="fas fa-layer-group"></i>
+            <h3>Full-Stack Dev</h3>
+            <ul>
+                <li>Laravel & PHP Architecture</li>
+                <li>Dynamic JavaScript Frameworks</li>
+                <li>Responsive HTML5/CSS3</li>
+                <li>API Development & Integration</li>
+            </ul>
         </div>
-    </section>
+        <div class="glass-card">
+            <i class="fas fa-database"></i>
+            <h3>Data & Automation</h3>
+            <ul>
+                <li>MySQL & MSSQL Administration</li>
+                <li>Windows Process Automation</li>
+                <li>Google Maps API Workflows</li>
+                <li>Custom Scripting (Bash/PowerShell)</li>
+            </ul>
+        </div>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="bg-teal-600 py-4">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 Ratan Thapa. All rights reserved.</p>
+<section id="infrastructure">
+    <span class="section-tag" style="color: #fff">Network Intelligence</span>
+    <h2 class="section-title">Security & <br>System Administration</h2>
+    <div class="grid">
+        <div class="glass-card">
+            <i class="fas fa-network-wired"></i>
+            <h3>Network Engineering</h3>
+            <ul>
+                <li>MikroTik & Cisco Core Routing</li>
+                <li>Sophos Firewall Management</li>
+                <li>VPN & Remote Work Solutions</li>
+                <li>High-Availability Switching</li>
+            </ul>
         </div>
-    </footer>
+        <div class="glass-card">
+            <i class="fas fa-envelope-open-text"></i>
+            <h3>Enterprise Messaging</h3>
+            <ul>
+                <li>Microsoft Exchange Server</li>
+                <li>Postfix & Dovecot Clusters</li>
+                <li>Email Security & Filtering</li>
+                <li>Webserver Optimization (Nginx/Apache)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="creative">
+    <span class="section-tag">Marketing Technology</span>
+    <h2 class="section-title">Identity & <br>Growth Strategy</h2>
+    <div class="grid">
+        <div class="glass-card">
+            <i class="fas fa-bezier-curve"></i>
+            <h3>Brand Design</h3>
+            <ul>
+                <li>Professional Branding & Identity</li>
+                <li>Photoshop Visual Asset Design</li>
+                <li>Business Card & Event Graphics</li>
+                <li>UI/UX Strategy for Web</li>
+            </ul>
+        </div>
+        <div class="glass-card">
+            <i class="fas fa-magnifying-glass-chart"></i>
+            <h3>Digital Growth</h3>
+            <ul>
+                <li>Search Engine Optimization (SEO)</li>
+                <li>Social Media Engine Management</li>
+                <li>Analytics & Conversion Tracking</li>
+                <li>Global Promotion Strategy</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="cta-box">
+        <h2 style="font-size: 3rem; margin-bottom: 10px;">Ready to Upgrade?</h2>
+        <p>Expert consulting for systems, networks, and development projects.</p>
+        <a href="mailto:mail@ratan.com.np" class="btn-main">Schedule a Consultation</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 RATAN.COM.NP | All Rights Reserved</p>
+</footer>
+
 </body>
 </html>
