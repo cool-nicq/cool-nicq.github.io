@@ -347,26 +347,31 @@
         const startLesson = (levelId) => {
             const levelVocab = VOCABULARY[levelId] || [];
             
-            // Collect ALL vocabulary items to use as distractors
             const allItems = Object.entries(VOCABULARY).flatMap(([cat, items]) => 
                 items.map(item => ({ ...item, category: cat }))
             );
             
-            // Create randomized exercises
             const exercises = shuffle(levelVocab).map(item => {
-                // Randomize between speaking and multiple choice
                 const type = Math.random() > 0.4 ? 'multiple' : 'speaking';
-                const question = state.direction === 'nepToNew' ? item.nepali : item.newari;
-                const answer = state.direction === 'nepToNew' ? item.newari : item.nepali;
+                
+                let question, answer;
+                switch(state.direction) {
+                    case 'nepToNew': question = item.nepali; answer = item.newari; break;
+                    case 'engToNew': question = item.english; answer = item.newari; break;
+                    case 'newToNep': question = item.newari; answer = item.nepali; break;
+                    case 'newToEng': question = item.newari; answer = item.english; break;
+                }
                 
                 let options = [answer];
                 
-                // Filter distractors: must not be the correct answer text
                 const possibleDistractors = allItems
-                    .map(v => state.direction === 'nepToNew' ? v.newari : v.nepali)
+                    .map(v => {
+                        if (state.direction.endsWith('New')) return v.newari;
+                        if (state.direction.endsWith('Nep')) return v.nepali;
+                        return v.english;
+                    })
                     .filter(val => val !== answer);
                 
-                // Pick 3 unique random distractors
                 const selectedDistractors = shuffle([...new Set(possibleDistractors)]).slice(0, 3);
                 options = shuffle([...options, ...selectedDistractors]);
 
@@ -465,20 +470,41 @@
 
             setup: () => `
                 <div class="p-6">
-                    <h2 class="text-2xl font-bold mb-8">Choose Path</h2>
-                    <div class="space-y-4 mb-8">
-                        <button onclick="state.direction='nepToNew'; render()" class="w-full p-6 rounded-2xl border-2 flex items-center justify-between ${state.direction === 'nepToNew' ? 'border-green-500 bg-green-50' : 'border-gray-200'}">
-                            <span class="font-bold">Nepali → Newari</span>
-                            ${state.direction === 'nepToNew' ? '<i data-lucide="check-circle" class="text-green-500"></i>' : ''}
-                        </button>
-                        <button onclick="state.direction='newToNep'; render()" class="w-full p-6 rounded-2xl border-2 flex items-center justify-between ${state.direction === 'newToNep' ? 'border-green-500 bg-green-50' : 'border-gray-200'}">
-                            <span class="font-bold">Newari → Nepali</span>
-                            ${state.direction === 'newToNep' ? '<i data-lucide="check-circle" class="text-green-500"></i>' : ''}
-                        </button>
+                    <h2 class="text-2xl font-bold mb-6">Choose Path</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Group 1 -->
+                        <div class="space-y-3">
+                            <button onclick="state.direction='nepToNew'; render()" class="w-full p-4 rounded-xl border-2 flex items-center justify-between ${state.direction === 'nepToNew' ? 'border-green-500 bg-green-50' : 'border-gray-100'}">
+                                <span class="font-bold">Nepali → Newari</span>
+                                ${state.direction === 'nepToNew' ? '<i data-lucide="check-circle" class="text-green-500" size="20"></i>' : ''}
+                            </button>
+                            <button onclick="state.direction='engToNew'; render()" class="w-full p-4 rounded-xl border-2 flex items-center justify-between ${state.direction === 'engToNew' ? 'border-green-500 bg-green-50' : 'border-gray-100'}">
+                                <span class="font-bold">English → Newari</span>
+                                ${state.direction === 'engToNew' ? '<i data-lucide="check-circle" class="text-green-500" size="20"></i>' : ''}
+                            </button>
+                        </div>
+
+                        <hr class="border-gray-200">
+
+                        <!-- Group 2 -->
+                        <div class="space-y-3">
+                            <button onclick="state.direction='newToNep'; render()" class="w-full p-4 rounded-xl border-2 flex items-center justify-between ${state.direction === 'newToNep' ? 'border-green-500 bg-green-50' : 'border-gray-100'}">
+                                <span class="font-bold">Newari → Nepali</span>
+                                ${state.direction === 'newToNep' ? '<i data-lucide="check-circle" class="text-green-500" size="20"></i>' : ''}
+                            </button>
+                            <button onclick="state.direction='newToEng'; render()" class="w-full p-4 rounded-xl border-2 flex items-center justify-between ${state.direction === 'newToEng' ? 'border-green-500 bg-green-50' : 'border-gray-100'}">
+                                <span class="font-bold">Newari → English</span>
+                                ${state.direction === 'newToEng' ? '<i data-lucide="check-circle" class="text-green-500" size="20"></i>' : ''}
+                            </button>
+                        </div>
                     </div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Your Name</label>
-                    <input id="userNameInput" type="text" placeholder="e.g. Birat" value="${state.user.name}" oninput="state.user.name=this.value" class="w-full p-4 bg-gray-100 rounded-xl mb-8 outline-none ring-blue-500 focus:ring-2">
-                    <button onclick="saveUser(); setView('home')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-md uppercase tracking-widest">Continue</button>
+
+                    <div class="mt-8">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Your Name</label>
+                        <input id="userNameInput" type="text" placeholder="e.g. Birat" value="${state.user.name}" oninput="state.user.name=this.value" class="w-full p-4 bg-gray-100 rounded-xl mb-8 outline-none ring-blue-500 focus:ring-2">
+                        <button onclick="saveUser(); setView('home')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-md uppercase tracking-widest">Continue</button>
+                    </div>
                 </div>`,
 
             home: () => `
@@ -495,7 +521,6 @@
                         <div class="h-1 w-12 bg-green-500 mx-auto mt-1 rounded-full"></div>
                     </div>
                     <div class="space-y-12 flex flex-col items-center relative">
-                        <!-- Path line -->
                         <div class="absolute top-10 bottom-10 w-2 bg-gray-100 -z-10"></div>
                         
                         ${LEVELS.map((l, index) => {
@@ -580,7 +605,6 @@
                             </div>`}
                     </div>
 
-                    <!-- Footer Action Bar -->
                     <div class="pt-4 border-t flex justify-between items-center gap-4">
                         ${!state.feedback ? `
                             <button onclick="checkAnswer('', true)" class="px-6 py-4 rounded-2xl font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-wider text-sm">
@@ -589,7 +613,6 @@
                         ` : ''}
                     </div>
 
-                    <!-- Result Toast -->
                     ${state.feedback ? `
                         <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 pb-10 border-t-8 animate-slide-up shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50
                             ${state.feedback.status === 'correct' ? 'bg-green-50 border-green-500' : (state.feedback.status === 'skipped' ? 'bg-gray-50 border-gray-400' : 'bg-red-50 border-red-500')}">
