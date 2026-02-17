@@ -15,6 +15,7 @@
             to { transform: translateY(0); }
         }
         .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+        .level-node { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -25,27 +26,278 @@
 
     <script>
         // --- DATA STRUCTURE ---
-        const VOCABULARY = [
-            { id: 1, level: 1, category: "Body Parts", nepali: "टाउको", newari: "छ्यँ", english: "Head" },
-            { id: 2, level: 1, category: "Body Parts", nepali: "आँखा", newari: "मिखा", english: "Eyes" },
-            { id: 3, level: 1, category: "Body Parts", nepali: "हात", newari: "ल्हा", english: "Hand" },
-            { id: 4, level: 1, category: "Body Parts", nepali: "खुट्टा", newari: "तुति", english: "Leg" },
-            { id: 5, level: 2, category: "Numbers", nepali: "एक", newari: "छ", english: "One" },
-            { id: 6, level: 2, category: "Numbers", nepali: "दुई", newari: "नसि", english: "Two" },
-            { id: 7, level: 2, category: "Numbers", nepali: "तीन", newari: "स्व", english: "Three" },
-            { id: 8, level: 3, category: "Family", nepali: "बुबा", newari: "अब्वा", english: "Father" },
-            { id: 9, level: 3, category: "Family", nepali: "आमा", newari: "अँमा", english: "Mother" },
-            { id: 10, level: 4, category: "Daily Words", nepali: "पानी", newari: "लः", english: "Water" },
-            { id: 11, level: 4, category: "Daily Words", nepali: "भात", newari: "जा", english: "Rice" },
-            { id: 12, level: 5, category: "Sentences", nepali: "म भात खान्छु", newari: "जि जा नया", english: "I eat rice" },
-        ];
+         const VOCABULARY = {
+          'body-parts': [
+                      // Head & Face
+                      { id: 1, nepali: "टाउको", newari: "छ्यँ", english: "Head" },
+                      { id: 2, nepali: "कपाल", newari: "सँ", english: "Hair" },
+                      { id: 3, nepali: "निधार", newari: "कपः", english: "Forehead" },
+                      { id: 4, nepali: "आँखा", newari: "मिखा", english: "Eye" },
+                      { id: 5, nepali: "भौं", newari: "मिखा सिँ", english: "Eyebrow" },
+                      { id: 6, nepali: "परौला", newari: "मिखा पाखा", english: "Eyelid" },
+                      { id: 7, nepali: "नाक", newari: "न्हाय्‌", english: "Nose" },
+                      { id: 8, nepali: "नाकको प्वाल", newari: "न्हाय्‌ ख्वः", english: "Nostril" },
+                      { id: 9, nepali: "कान", newari: "न्हाय्‌पँ", english: "Ear" },
+                      { id: 10, nepali: "गाला", newari: "कपु", english: "Cheek" },
+                      { id: 11, nepali: "मुख", newari: "म्वतु", english: "Mouth" },
+                      { id: 12, nepali: "ओठ", newari: "म्वतु सिँ", english: "Lip" },
+                      { id: 13, nepali: "दाँत", newari: "वा", english: "Tooth" },
+                      { id: 14, nepali: "जीब्रो", newari: "म्ये", english: "Tongue" },
+                      { id: 15, nepali: "चिउँडो", newari: "कपः तला", english: "Chin" },
+      
+                      // Upper Body
+                      { id: 16, nepali: "गर्दन", newari: "कः", english: "Neck" },
+                      { id: 17, nepali: "काँध", newari: "कुम्ह", english: "Shoulder" },
+                      { id: 18, nepali: "छाती", newari: "नुगः", english: "Chest" },
+                      { id: 19, nepali: "ढाड", newari: "जः", english: "Back" },
+                      { id: 20, nepali: "पेट", newari: "प्वाः", english: "Stomach" },
+                      { id: 21, nepali: "नाभि", newari: "भुचु", english: "Navel" },
+                      { id: 22, nepali: "कमर", newari: "जः तला", english: "Waist" },
+      
+                      // Hands & Arms
+                      { id: 23, nepali: "हात", newari: "ल्हा", english: "Hand" },
+                      { id: 24, nepali: "हातको हत्केला", newari: "ल्हा पाखा", english: "Palm" },
+                      { id: 25, nepali: "कुहिनो", newari: "ल्हा ख्वः", english: "Elbow" },
+                      { id: 26, nepali: "नाडी", newari: "ल्हा न्ह्याः", english: "Wrist" },
+                      { id: 27, nepali: "औंला", newari: "पतिँ", english: "Finger" },
+                      { id: 28, nepali: "बुढी औंला", newari: "पतिँ थ्व", english: "Thumb" },
+                      { id: 29, nepali: "नङ", newari: "लुसि", english: "Nail" },
+      
+                      // Legs & Feet
+                      { id: 30, nepali: "खुट्टा", newari: "तुति", english: "Leg" },
+                      { id: 31, nepali: "घुँडा", newari: "तुति ख्वः", english: "Knee" },
+                      { id: 32, nepali: "गोढा", newari: "तुति न्ह्याः", english: "Ankle" },
+                      { id: 33, nepali: "पैताला", newari: "तुति पाखा", english: "Sole" },
+                      { id: 34, nepali: "एडी", newari: "तुति तला", english: "Heel" },
+                      { id: 35, nepali: "खुट्टाको औंला", newari: "तुति पतिँ", english: "Toe" },
+      
+                      // Internal Organs
+                      { id: 36, nepali: "मुटु", newari: "न्हु", english: "Heart" },
+                      { id: 37, nepali: "फोक्सो", newari: "फुसा", english: "Lungs" },
+                      { id: 38, nepali: "कलेजो", newari: "कलिजा", english: "Liver" },
+                      { id: 39, nepali: "मस्तिष्क", newari: "छ्यँ न्हु", english: "Brain" },
+                      { id: 40, nepali: "आन्द्रा", newari: "प्वाः न्हु", english: "Intestine" },
+                      { id: 41, nepali: "मिर्गौला", newari: "न्हु पाखा", english: "Kidney" },
+      
+                      // Body Substances
+                      { id: 42, nepali: "रगत", newari: "ह्याउँगु", english: "Blood" },
+                      { id: 43, nepali: "हाड", newari: "क्वाथ", english: "Bone" },
+                      { id: 44, nepali: "छाला", newari: "छ्वा", english: "Skin" },
+                      { id: 45, nepali: "पसिना", newari: "स्याः", english: "Sweat" },
+                      { id: 46, nepali: "आँसु", newari: "मिखा ह्याउँगु", english: "Tear" }
+      
+                  ],
+          'numbers': [
+      
+                    // 1–10
+                    { id: 1, nepali: "एक", newari: "छ", english: "One" },
+                    { id: 2, nepali: "दुई", newari: "नसि", english: "Two" },
+                    { id: 3, nepali: "तीन", newari: "स्व", english: "Three" },
+                    { id: 4, nepali: "चार", newari: "प्य", english: "Four" },
+                    { id: 5, nepali: "पाँच", newari: "ङा", english: "Five" },
+                    { id: 6, nepali: "छ", newari: "त्ह", english: "Six" },
+                    { id: 7, nepali: "सात", newari: "न्ह", english: "Seven" },
+                    { id: 8, nepali: "आठ", newari: "च्य", english: "Eight" },
+                    { id: 9, nepali: "नौ", newari: "गु", english: "Nine" },
+                    { id: 10, nepali: "दस", newari: "छि", english: "Ten" },
+                    
+                    // 11–19
+                    { id: 11, nepali: "एघार", newari: "छि छ", english: "Eleven" },
+                    { id: 12, nepali: "बाह्र", newari: "छि नसि", english: "Twelve" },
+                    { id: 13, nepali: "तेह्र", newari: "छि स्व", english: "Thirteen" },
+                    { id: 14, nepali: "चौध", newari: "छि प्य", english: "Fourteen" },
+                    { id: 15, nepali: "पन्ध्र", newari: "छि ङा", english: "Fifteen" },
+                    { id: 16, nepali: "सोह्र", newari: "छि त्ह", english: "Sixteen" },
+                    { id: 17, nepali: "सत्र", newari: "छि न्ह", english: "Seventeen" },
+                    { id: 18, nepali: "अठार", newari: "छि च्य", english: "Eighteen" },
+                    { id: 19, nepali: "उन्नाइस", newari: "छि गु", english: "Nineteen" },
+                    
+                    // Tens
+                    { id: 20, nepali: "बीस", newari: "निसि", english: "Twenty" },
+                    { id: 30, nepali: "तीस", newari: "स्वसि", english: "Thirty" },
+                    { id: 40, nepali: "चालीस", newari: "प्यसि", english: "Forty" },
+                    { id: 50, nepali: "पचास", newari: "ङासि", english: "Fifty" },
+                    { id: 60, nepali: "साठी", newari: "त्हसि", english: "Sixty" },
+                    { id: 70, nepali: "सत्तरी", newari: "न्हसि", english: "Seventy" },
+                    { id: 80, nepali: "असी", newari: "च्यसि", english: "Eighty" },
+                    { id: 90, nepali: "नब्बे", newari: "गुसि", english: "Ninety" },
+                    
+                    // 21–29 Example Pattern (You can auto-generate similarly)
+                    { id: 21, nepali: "एक्काइस", newari: "निसि छ", english: "Twenty One" },
+                    { id: 22, nepali: "बाइस", newari: "निसि नसि", english: "Twenty Two" },
+                    { id: 23, nepali: "तेइस", newari: "निसि स्व", english: "Twenty Three" },
+                    { id: 24, nepali: "चौबीस", newari: "निसि प्य", english: "Twenty Four" },
+                    { id: 25, nepali: "पच्चीस", newari: "निसि ङा", english: "Twenty Five" },
+                    
+                    // Continue similar pattern up to 99 if needed dynamically
+                    
+                    { id: 100, nepali: "सय", newari: "स", english: "One Hundred" },
+                    
+                    // Large Numbers
+                    { id: 1000, nepali: "हजार", newari: "थ्य", english: "One Thousand" },
+                    { id: 10000, nepali: "दश हजार", newari: "छि थ्य", english: "Ten Thousand" },
+                    { id: 100000, nepali: "एक लाख", newari: "छ लाख", english: "One Lakh" },
+                    { id: 10000000, nepali: "एक करोड", newari: "छ करोड", english: "One Crore" }
+                    
+                    ],
+          'colors': [
+      
+                    { id: 1, nepali: "रातो", newari: "ह्याउँ", english: "Red" },
+                    { id: 2, nepali: "निलो", newari: "वाउँ", english: "Blue" },
+                    { id: 3, nepali: "पहेलो", newari: "मसु", english: "Yellow" },
+                    { id: 4, nepali: "हरियो", newari: "लहुँ", english: "Green" },
+                    { id: 5, nepali: "कालो", newari: "काला", english: "Black" },
+                    { id: 6, nepali: "सेतो", newari: "धौ", english: "White" },
+                    { id: 7, nepali: "खैरो", newari: "खै", english: "Brown" },
+                    { id: 8, nepali: "गुलाबी", newari: "गुलाबी", english: "Pink" },
+                    { id: 9, nepali: "बैजनी", newari: "बैजनी", english: "Purple" },
+                    { id: 10, nepali: "सुन्तला", newari: "सुन्तला", english: "Orange" },
+                    
+                    { id: 11, nepali: "आसमानी", newari: "आसमानी", english: "Sky Blue" },
+                    { id: 12, nepali: "फिका रातो", newari: "हल्का ह्याउँ", english: "Light Red" },
+                    { id: 13, nepali: "गाढा निलो", newari: "गाढा वाउँ", english: "Dark Blue" },
+                    { id: 14, nepali: "फिका हरियो", newari: "हल्का लहुँ", english: "Light Green" },
+                    { id: 15, nepali: "गाढा हरियो", newari: "गाढा लहुँ", english: "Dark Green" },
+                    { id: 16, nepali: "सुनौलो", newari: "सुन", english: "Golden" },
+                    { id: 17, nepali: "चाँदी रंग", newari: "चाँदी", english: "Silver" },
+                    { id: 18, nepali: "खैरो सेतो", newari: "धौ खै", english: "Grey" },
+                    { id: 19, nepali: "क्रीम", newari: "क्रीम", english: "Cream" },
+                    { id: 20, nepali: "मरुन", newari: "मरुन", english: "Maroon" }
+                    
+                    ],
+      
+          'family': [
+      
+                    // Parents
+                    { id: 1, nepali: "बुबा", newari: "अब्वा", english: "Father" },
+                    { id: 2, nepali: "आमा", newari: "अँमा", english: "Mother" },
+                    
+                    // Grandparents
+                    { id: 3, nepali: "हजुरबुबा", newari: "अब्वा दय", english: "Grandfather" },
+                    { id: 4, nepali: "हजुरआमा", newari: "अँमा दय", english: "Grandmother" },
+                    
+                    // Siblings
+                    { id: 5, nepali: "दाजु", newari: "किजा", english: "Elder Brother" },
+                    { id: 6, nepali: "भाइ", newari: "भाइ", english: "Younger Brother" },
+                    { id: 7, nepali: "दिदी", newari: "किजी", english: "Elder Sister" },
+                    { id: 8, nepali: "बहिनी", newari: "बहिनी", english: "Younger Sister" },
+                    
+                    // Uncle & Aunt (Father Side)
+                    { id: 9, nepali: "काका", newari: "काका", english: "Uncle (Father's younger brother)" },
+                    { id: 10, nepali: "काकी", newari: "काकी", english: "Aunt (Father's younger brother's wife)" },
+                    { id: 11, nepali: "ठूलो बुबा", newari: "अब्वा थ्व", english: "Uncle (Father's elder brother)" },
+                    { id: 12, nepali: "ठूली आमा", newari: "अँमा थ्व", english: "Aunt (Father's elder brother's wife)" },
+                    
+                    // Uncle & Aunt (Mother Side)
+                    { id: 13, nepali: "मामा", newari: "मामा", english: "Maternal Uncle" },
+                    { id: 14, nepali: "माइजु", newari: "माइजु", english: "Maternal Aunt" },
+                    
+                    // Children
+                    { id: 15, nepali: "छोरा", newari: "छो", english: "Son" },
+                    { id: 16, nepali: "छोरी", newari: "छोरी", english: "Daughter" },
+                    
+                    // Nephew & Niece
+                    { id: 17, nepali: "भतिजा", newari: "भतिजा", english: "Nephew (Brother's son)" },
+                    { id: 18, nepali: "भतिजी", newari: "भतिजी", english: "Niece (Brother's daughter)" },
+                    { id: 19, nepali: "भाञ्जा", newari: "भाञ्जा", english: "Nephew (Sister's son)" },
+                    { id: 20, nepali: "भाञ्जी", newari: "भाञ्जी", english: "Niece (Sister's daughter)" },
+                    
+                    // In-Laws
+                    { id: 21, nepali: "ससुरा", newari: "ससुरा", english: "Father-in-law" },
+                    { id: 22, nepali: "सासु", newari: "सासु", english: "Mother-in-law" },
+                    { id: 23, nepali: "ज्वाइँ", newari: "ज्वाइँ", english: "Son-in-law" },
+                    { id: 24, nepali: "बुहारी", newari: "बुहारी", english: "Daughter-in-law" },
+                    
+                    // Spouse
+                    { id: 25, nepali: "श्रीमान", newari: "श्रीमान", english: "Husband" },
+                    { id: 26, nepali: "श्रीमती", newari: "श्रीमती", english: "Wife" }
+                    
+                    ],
+      
+          'daily-words': [
+      
+                    // Food & Drink
+                    { id: 1, nepali: "पानी", newari: "लः", english: "Water" },
+                    { id: 2, nepali: "भात", newari: "जा", english: "Rice" },
+                    { id: 3, nepali: "दाल", newari: "दाल", english: "Lentils" },
+                    { id: 4, nepali: "तरकारी", newari: "तर्कारी", english: "Vegetable Curry" },
+                    { id: 5, nepali: "दूध", newari: "दू", english: "Milk" },
+                    { id: 6, nepali: "चिया", newari: "चिया", english: "Tea" },
+                    { id: 7, nepali: "रोटी", newari: "रोटी", english: "Bread" },
+                    { id: 8, nepali: "नुन", newari: "नुन", english: "Salt" },
+                    { id: 9, nepali: "चिनी", newari: "चिनी", english: "Sugar" },
+                    
+                    // Home Objects
+                    { id: 10, nepali: "घर", newari: "छें", english: "House" },
+                    { id: 11, nepali: "ढोका", newari: "पुका", english: "Door" },
+                    { id: 12, nepali: "झ्याल", newari: "झ्याल", english: "Window" },
+                    { id: 13, nepali: "ओछ्यान", newari: "ओछ्यान", english: "Bed" },
+                    { id: 14, nepali: "कुर्सी", newari: "कुर्सी", english: "Chair" },
+                    { id: 15, nepali: "टेबुल", newari: "टेबुल", english: "Table" },
+                    
+                    // Daily Actions
+                    { id: 16, nepali: "खानु", newari: "नके", english: "To Eat" },
+                    { id: 17, nepali: "पिउनु", newari: "थके", english: "To Drink" },
+                    { id: 18, nepali: "जानु", newari: "याके", english: "To Go" },
+                    { id: 19, nepali: "आउनु", newari: "वाके", english: "To Come" },
+                    { id: 20, nepali: "सुत्नु", newari: "स्वके", english: "To Sleep" },
+                    { id: 21, nepali: "बस्नु", newari: "ताके", english: "To Sit" },
+                    { id: 22, nepali: "उठ्नु", newari: "थ्वाके", english: "To Wake Up" },
+                    
+                    // Common Words
+                    { id: 23, nepali: "हो", newari: "ह्यां", english: "Yes" },
+                    { id: 24, nepali: "होइन", newari: "म्ह", english: "No" },
+                    { id: 25, nepali: "कृपया", newari: "कृपया", english: "Please" },
+                    { id: 26, nepali: "धन्यवाद", newari: "धन्यवाद", english: "Thank You" },
+                    { id: 27, nepali: "माफ गर्नुहोस्", newari: "माफ", english: "Sorry" },
+                    { id: 28, nepali: "नमस्ते", newari: "ज्वजलपा", english: "Hello (Greeting)" }
+                    
+                    ],
+      
+          'sentences': [
+      
+                    // Simple Daily Sentences
+                    { id: 1, nepali: "म भात खान्छु", newari: "जि जा नया", english: "I eat rice" },
+                    { id: 2, nepali: "म पानी पिउँछु", newari: "जि लः थया", english: "I drink water" },
+                    { id: 3, nepali: "म घर जान्छु", newari: "जि छें यया", english: "I go home" },
+                    { id: 4, nepali: "उ घर जान्छ", newari: "छि छें यया", english: "He/She goes home" },
+                    { id: 5, nepali: "हामी स्कूल जान्छौं", newari: "जिमि स्कूल यया", english: "We go to school" },
+                    
+                    // Identity Sentences
+                    { id: 6, nepali: "म विद्यार्थी हुँ", newari: "जि विद्यार्थी ह्यां", english: "I am a student" },
+                    { id: 7, nepali: "उ शिक्षक हो", newari: "छि शिक्षक ह्यां", english: "He/She is a teacher" },
+                    { id: 8, nepali: "यो मेरो घर हो", newari: "थ्व जि छें ह्यां", english: "This is my house" },
+                    
+                    // Questions
+                    { id: 9, nepali: "तिमी कहाँ जान्छौ?", newari: "छे थः यया?", english: "Where are you going?" },
+                    { id: 10, nepali: "तिम्रो नाम के हो?", newari: "छे नाम थः खः?", english: "What is your name?" },
+                    { id: 11, nepali: "तिमीलाई कस्तो छ?", newari: "छे थः जुला?", english: "How are you?" },
+                    
+                    // Responses
+                    { id: 12, nepali: "म ठिक छु", newari: "जि जुला", english: "I am fine" },
+                    { id: 13, nepali: "धन्यवाद", newari: "धन्यवाद", english: "Thank you" },
+                    { id: 14, nepali: "माफ गर्नुहोस्", newari: "माफ", english: "Sorry" },
+                    
+                    // Family Sentences
+                    { id: 15, nepali: "उ मेरो दाजु हो", newari: "छि जि किजा ह्यां", english: "He is my elder brother" },
+                    { id: 16, nepali: "उ मेरी आमा हुन्", newari: "छि जि अँमा ह्यां", english: "She is my mother" },
+                    
+                    // Daily Activities
+                    { id: 17, nepali: "म सुत्न जान्छु", newari: "जि स्वके यया", english: "I go to sleep" },
+                    { id: 18, nepali: "उ चिया पिउँछ", newari: "छि चिया थया", english: "He/She drinks tea" },
+                    { id: 19, nepali: "हामी खेल्छौं", newari: "जिमि खेल यया", english: "We play" },
+                    { id: 20, nepali: "म पढ्छु", newari: "जि पढ यया", english: "I study" }
+                    
+                    ]
+      };
 
         const LEVELS = [
-            { id: 1, title: "Body Parts", icon: "👤", minXp: 0 },
-            { id: 2, title: "Numbers", icon: "🔢", minXp: 100 },
-            { id: 3, title: "Family", icon: "👨‍👩‍👧", minXp: 250 },
-            { id: 4, title: "Daily Words", icon: "🍲", minXp: 450 },
-            { id: 5, title: "Sentences", icon: "💬", minXp: 700 },
+            { id: 'body-parts', title: "Body Parts", icon: "👤", minXp: 0 },
+            { id: 'numbers', title: "Numbers", icon: "🔢", minXp: 50 },
+            { id: 'colors', title: "Colors", icon: "🎨", minXp: 120 },
+            { id: 'family', title: "Family", icon: "👨‍👩‍👧", minXp: 200 },
+            { id: 'daily-words', title: "Daily Words", icon: "🍲", minXp: 300 },
+            { id: 'sentences', title: "Sentences", icon: "💬", minXp: 450 },
         ];
 
         // --- APP STATE ---
@@ -55,7 +307,8 @@
             user: JSON.parse(localStorage.getItem('lingo_nepal_user')) || { name: '', xp: 0, streak: 0, hearts: 3 },
             activeLesson: null,
             feedback: null,
-            isListening: false
+            isListening: false,
+            currentRecognition: null
         };
 
         // --- UTILS ---
@@ -75,22 +328,42 @@
         };
 
         // --- CORE ACTIONS ---
-        const setView = (v) => { state.view = v; render(); };
+        const setView = (v) => { 
+            if (state.currentRecognition) {
+                state.currentRecognition.stop();
+                state.currentRecognition = null;
+            }
+            state.view = v; 
+            render(); 
+        };
         
         const startLesson = (levelId) => {
-            const levelVocab = VOCABULARY.filter(v => v.level === levelId);
+            const levelVocab = VOCABULARY[levelId] || [];
+            
+            // Collect ALL vocabulary items to use as distractors
+            const allItems = Object.entries(VOCABULARY).flatMap(([cat, items]) => 
+                items.map(item => ({ ...item, category: cat }))
+            );
+            
+            // Create randomized exercises
             const exercises = shuffle(levelVocab).map(item => {
+                // Randomize between speaking and multiple choice
                 const type = Math.random() > 0.4 ? 'multiple' : 'speaking';
                 const question = state.direction === 'nepToNew' ? item.nepali : item.newari;
                 const answer = state.direction === 'nepToNew' ? item.newari : item.nepali;
                 
                 let options = [answer];
-                const distractors = VOCABULARY.filter(v => v.id !== item.id).map(v => 
-                    state.direction === 'nepToNew' ? v.newari : v.nepali
-                );
-                options = [...new Set([...options, ...shuffle(distractors).slice(0, 3)])];
+                
+                // Filter distractors: must not be the correct answer text
+                const possibleDistractors = allItems
+                    .map(v => state.direction === 'nepToNew' ? v.newari : v.nepali)
+                    .filter(val => val !== answer);
+                
+                // Pick 3 unique random distractors
+                const selectedDistractors = shuffle([...new Set(possibleDistractors)]).slice(0, 3);
+                options = shuffle([...options, ...selectedDistractors]);
 
-                return { ...item, type, question, answer, options: shuffle(options) };
+                return { ...item, type, question, answer, options };
             });
 
             state.activeLesson = { levelId, exercises, currentIndex: 0 };
@@ -98,12 +371,17 @@
             render();
         };
 
-        const checkAnswer = (selected) => {
+        const checkAnswer = (selected, skipped = false) => {
             if (state.feedback) return;
             const current = state.activeLesson.exercises[state.activeLesson.currentIndex];
-            const isCorrect = selected.trim().toLowerCase() === current.answer.trim().toLowerCase();
+            
+            if (skipped) {
+                state.feedback = { status: 'skipped', msg: `No problem! Answer: ${current.answer}` };
+                render();
+                return;
+            }
 
-            // Speaking mode is more lenient - if we got any result, we count it for this demo
+            const isCorrect = selected.trim().toLowerCase() === current.answer.trim().toLowerCase();
             const finalCorrect = current.type === 'speaking' ? (selected.length > 0) : isCorrect;
 
             if (finalCorrect) {
@@ -138,105 +416,102 @@
             }
         };
 
-        // Improved Start Listening with auto-stop
         const startListening = () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             
             if (!SpeechRecognition) {
-                alert("Speech recognition is not supported in this browser. Please try Chrome or Safari.");
+                alert("Speech recognition not supported in this browser.");
                 return;
             }
 
             const recognition = new SpeechRecognition();
+            state.currentRecognition = recognition;
             recognition.lang = 'hi-IN';
             recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-            recognition.continuous = false; // Ensure it doesn't keep listening forever
+            recognition.continuous = false;
 
-            recognition.onstart = () => { 
-                state.isListening = true; 
-                render(); 
-            };
-
-            recognition.onend = () => { 
-                state.isListening = false; 
-                render(); 
-            };
-
-            recognition.onerror = (event) => {
-                state.isListening = false;
-                render();
-                if (event.error !== 'aborted') {
-                    console.error("Speech recognition error:", event.error);
-                }
-            };
+            recognition.onstart = () => { state.isListening = true; render(); };
+            recognition.onend = () => { state.isListening = false; render(); };
+            recognition.onerror = () => { state.isListening = false; render(); };
 
             recognition.onresult = (event) => {
-                // IMMEDIATELY stop recognition once a result is found
                 recognition.stop();
                 state.isListening = false;
-                
-                const transcript = event.results[0][0].transcript;
-                checkAnswer(transcript);
+                checkAnswer(event.results[0][0].transcript);
             };
 
-            try {
-                recognition.start();
-            } catch (e) {
-                state.isListening = false;
-                render();
-            }
+            try { recognition.start(); } catch (e) { state.isListening = false; render(); }
         };
 
         // --- VIEW TEMPLATES ---
         const views = {
             welcome: () => `
                 <div class="h-screen flex flex-col items-center justify-center p-6 text-center">
-                    <div class="w-32 h-32 bg-green-100 rounded-3xl flex items-center justify-center mb-6 animate-bounce-slow text-6xl">🇳🇵</div>
+                    <div class="w-32 h-32 bg-green-100 rounded-3xl flex items-center justify-center mb-6 animate-bounce-slow text-6xl shadow-inner">🇳🇵</div>
                     <h1 class="text-4xl font-black text-green-600 mb-2">LingoNepal</h1>
-                    <p class="text-gray-500 mb-12 text-lg">Learn Nepali & Newari effectively.</p>
-                    <button onclick="setView('setup')" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl shadow-lg transform active:scale-95 transition-all mb-4 uppercase">Get Started</button>
+                    <p class="text-gray-500 mb-12 text-lg">Vocabulary & Fluency Master</p>
+                    <button onclick="setView('setup')" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl shadow-lg transform active:scale-95 transition-all mb-4 uppercase tracking-wider">Get Started</button>
                 </div>`,
 
             setup: () => `
                 <div class="p-6">
-                    <h2 class="text-2xl font-bold mb-8">Choose your path</h2>
+                    <h2 class="text-2xl font-bold mb-8">Choose Path</h2>
                     <div class="space-y-4 mb-8">
                         <button onclick="state.direction='nepToNew'; render()" class="w-full p-6 rounded-2xl border-2 flex items-center justify-between ${state.direction === 'nepToNew' ? 'border-green-500 bg-green-50' : 'border-gray-200'}">
                             <span class="font-bold">Nepali → Newari</span>
+                            ${state.direction === 'nepToNew' ? '<i data-lucide="check-circle" class="text-green-500"></i>' : ''}
                         </button>
                         <button onclick="state.direction='newToNep'; render()" class="w-full p-6 rounded-2xl border-2 flex items-center justify-between ${state.direction === 'newToNep' ? 'border-green-500 bg-green-50' : 'border-gray-200'}">
                             <span class="font-bold">Newari → Nepali</span>
+                            ${state.direction === 'newToNep' ? '<i data-lucide="check-circle" class="text-green-500"></i>' : ''}
                         </button>
                     </div>
-                    <input id="userNameInput" type="text" placeholder="Your Name" value="${state.user.name}" oninput="state.user.name=this.value" class="w-full p-4 bg-gray-100 rounded-xl mb-8 outline-none ring-blue-500 focus:ring-2">
-                    <button onclick="saveUser(); setView('home')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-md">CONTINUE</button>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Your Name</label>
+                    <input id="userNameInput" type="text" placeholder="e.g. Birat" value="${state.user.name}" oninput="state.user.name=this.value" class="w-full p-4 bg-gray-100 rounded-xl mb-8 outline-none ring-blue-500 focus:ring-2">
+                    <button onclick="saveUser(); setView('home')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-md uppercase tracking-widest">Continue</button>
                 </div>`,
 
             home: () => `
                 <header class="bg-white border-b sticky top-0 p-4 flex justify-between items-center z-20">
                     <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-1 text-orange-500"><i data-lucide="flame" class="fill-current"></i><span class="font-bold">${state.user.streak}</span></div>
-                        <div class="flex items-center gap-1 text-yellow-500"><i data-lucide="trophy"></i><span class="font-bold">${state.user.xp}</span></div>
+                        <div class="flex items-center gap-1 text-orange-500"><i data-lucide="flame" class="fill-current" size="20"></i><span class="font-bold">${state.user.streak}</span></div>
+                        <div class="flex items-center gap-1 text-yellow-500"><i data-lucide="trophy" size="20"></i><span class="font-bold">${state.user.xp}</span></div>
                     </div>
-                    <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="fill-current"></i><span class="font-bold">${state.user.hearts}</span></div>
+                    <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="fill-current" size="20"></i><span class="font-bold">${state.user.hearts}</span></div>
                 </header>
-                <main class="p-6 space-y-10 flex flex-col items-center">
-                    ${LEVELS.map(l => {
-                        const isLocked = state.user.xp < l.minXp;
-                        return `
-                        <div class="text-center">
-                            <button onclick="${isLocked ? '' : `startLesson(${l.id})`}" class="w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-xl border-b-8 active:border-b-0 active:translate-y-1 transition-all ${isLocked ? 'bg-gray-300 border-gray-400 grayscale' : 'bg-green-500 border-green-700'}">
-                                ${l.icon}
-                            </button>
-                            <p class="mt-2 font-bold ${isLocked ? 'text-gray-400' : ''}">${l.title}</p>
-                        </div>`;
-                    }).join('')}
+                <main class="p-6 pb-24">
+                    <div class="mb-8 text-center">
+                        <h2 class="text-xl font-black text-gray-800 uppercase tracking-tighter">Vocabulary Path</h2>
+                        <div class="h-1 w-12 bg-green-500 mx-auto mt-1 rounded-full"></div>
+                    </div>
+                    <div class="space-y-12 flex flex-col items-center relative">
+                        <!-- Path line -->
+                        <div class="absolute top-10 bottom-10 w-2 bg-gray-100 -z-10"></div>
+                        
+                        ${LEVELS.map((l, index) => {
+                            const isLocked = state.user.xp < l.minXp;
+                            const offset = index % 2 === 0 ? 'translate-x-4' : '-translate-x-4';
+                            return `
+                            <div class="text-center level-node ${offset}">
+                                <div class="relative inline-block">
+                                    <button onclick="${isLocked ? '' : `startLesson('${l.id}')`}" 
+                                        class="w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-xl border-b-8 active:border-b-0 active:translate-y-1 transition-all 
+                                        ${isLocked ? 'bg-gray-300 border-gray-400 grayscale' : 'bg-green-500 border-green-700 hover:bg-green-400'}">
+                                        ${l.icon}
+                                    </button>
+                                    ${!isLocked ? '<div class="absolute -top-1 -right-1 bg-blue-500 w-6 h-6 rounded-full border-2 border-white"></div>' : ''}
+                                </div>
+                                <p class="mt-3 font-black text-sm uppercase tracking-tight ${isLocked ? 'text-gray-400' : 'text-gray-700'}">${l.title}</p>
+                                ${isLocked ? `<p class="text-[10px] font-bold text-gray-400">${l.minXp} XP REQ</p>` : ''}
+                            </div>`;
+                        }).join('')}
+                    </div>
                 </main>
-                <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t p-4 flex justify-around">
-                    <i data-lucide="home" class="text-blue-500"></i>
-                    <i data-lucide="award" class="text-gray-400"></i>
-                    <i data-lucide="user" class="text-gray-400"></i>
+                <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t p-4 flex justify-around shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+                    <i data-lucide="home" class="text-blue-500 cursor-pointer"></i>
+                    <i data-lucide="book-open" class="text-gray-400 cursor-pointer"></i>
+                    <i data-lucide="users" class="text-gray-400 cursor-pointer"></i>
+                    <i data-lucide="settings" class="text-gray-400 cursor-pointer"></i>
                 </nav>`,
 
             lesson: () => {
@@ -246,50 +521,117 @@
                 <div class="p-6 flex flex-col h-screen">
                     <div class="flex items-center gap-4 mb-8">
                         <button onclick="setView('home')"><i data-lucide="x" class="text-gray-400"></i></button>
-                        <div class="flex-grow bg-gray-200 h-3 rounded-full overflow-hidden"><div class="bg-green-500 h-full transition-all" style="width: ${progress}%"></div></div>
+                        <div class="flex-grow bg-gray-200 h-3 rounded-full overflow-hidden">
+                            <div class="bg-green-500 h-full transition-all duration-500" style="width: ${progress}%"></div>
+                        </div>
                         <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="fill-current" size="18"></i><span class="font-bold">${state.user.hearts}</span></div>
                     </div>
+                    
                     <div class="flex-grow">
-                        <h2 class="text-2xl font-bold mb-4">${current.type === 'multiple' ? 'Pick the correct answer' : 'Pronounce clearly'}</h2>
-                        <div class="flex items-center gap-3 mb-8">
-                            <button onclick="speak('${current.question}')" class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="volume-2"></i></button>
-                            <span class="text-3xl font-bold">${current.question}</span>
-                            <span class="text-gray-400 text-sm">(${current.english})</span>
+                        <h2 class="text-2xl font-black mb-6 text-gray-800 leading-tight">
+                            ${current.type === 'multiple' ? 'Choose the correct meaning' : 'Speak this out loud'}
+                        </h2>
+                        
+                        <div class="bg-blue-50 p-6 rounded-3xl border-2 border-blue-100 mb-8 relative">
+                            <div class="flex items-center gap-4">
+                                <button onclick="speak('${current.question}')" class="w-12 h-12 bg-white text-blue-500 rounded-2xl shadow-sm flex items-center justify-center active:scale-90 transition-transform">
+                                    <i data-lucide="volume-2"></i>
+                                </button>
+                                <div>
+                                    <p class="text-3xl font-black text-blue-900">${current.question}</p>
+                                    <p class="text-blue-400 font-bold text-sm">Pronounce carefully</p>
+                                </div>
+                            </div>
                         </div>
+
                         ${current.type === 'multiple' ? `
-                            <div class="grid gap-3">
+                            <div class="grid gap-4">
                                 ${current.options.map(opt => `
-                                    <button onclick="checkAnswer('${opt}')" class="p-4 border-2 rounded-2xl text-left font-bold transition-all ${state.feedback?.status === 'correct' && opt === current.answer ? 'bg-green-100 border-green-500 text-green-700' : 'border-gray-200 hover:bg-gray-50'}">${opt}</button>
+                                    <button onclick="checkAnswer('${opt}')" class="group p-5 border-2 rounded-2xl text-left font-bold transition-all hover:border-blue-400 active:bg-blue-50
+                                        ${state.feedback?.status === 'correct' && opt === current.answer ? 'bg-green-100 border-green-500 text-green-700' : 'border-gray-200'}">
+                                        <span class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-blue-100 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors">
+                                            <i data-lucide="arrow-right" size="14"></i>
+                                        </span>
+                                        ${opt}
+                                    </button>
                                 `).join('')}
                             </div>` : `
-                            <div class="flex flex-col items-center py-10">
-                                <button id="micBtn" onclick="startListening()" class="w-32 h-32 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-90 ${state.isListening ? 'bg-red-500 animate-pulse shadow-red-200 shadow-2xl' : 'bg-blue-500'}">
-                                    <i data-lucide="mic" class="text-white" size="48"></i>
-                                </button>
-                                <p class="mt-4 text-gray-400 font-bold">${state.isListening ? 'Recording... Finish speaking' : 'Tap to Speak'}</p>
+                            <div class="flex flex-col items-center py-8">
+                                <div class="relative">
+                                    <button onclick="startListening()" class="w-32 h-32 rounded-full flex items-center justify-center shadow-xl transition-all transform active:scale-95
+                                        ${state.isListening ? 'bg-red-500 animate-pulse ring-8 ring-red-100' : 'bg-blue-500 ring-8 ring-blue-50 hover:bg-blue-400'}">
+                                        <i data-lucide="mic" class="text-white" size="40"></i>
+                                    </button>
+                                    ${state.isListening ? '<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">REC</div>' : ''}
+                                </div>
+                                <p class="mt-6 text-gray-500 font-black uppercase tracking-widest text-sm">
+                                    ${state.isListening ? 'Listening now...' : 'Tap Mic to Start'}
+                                </p>
                             </div>`}
                     </div>
+
+                    <!-- Footer Action Bar -->
+                    <div class="pt-4 border-t flex justify-between items-center gap-4">
+                        ${!state.feedback ? `
+                            <button onclick="checkAnswer('', true)" class="px-6 py-4 rounded-2xl font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-wider text-sm">
+                                Skip
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <!-- Result Toast -->
                     ${state.feedback ? `
-                        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 border-t-8 animate-slide-up ${state.feedback.status === 'correct' ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}">
-                            <div class="flex items-center gap-3 mb-4">
-                                <i data-lucide="${state.feedback.status === 'correct' ? 'check-circle' : 'alert-circle'}" class="${state.feedback.status === 'correct' ? 'text-green-600' : 'text-red-600'}"></i>
-                                <span class="font-bold text-xl ${state.feedback.status === 'correct' ? 'text-green-800' : 'text-red-800'}">${state.feedback.msg}</span>
+                        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 pb-10 border-t-8 animate-slide-up shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50
+                            ${state.feedback.status === 'correct' ? 'bg-green-50 border-green-500' : (state.feedback.status === 'skipped' ? 'bg-gray-50 border-gray-400' : 'bg-red-50 border-red-500')}">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center ${state.feedback.status === 'correct' ? 'bg-green-500' : (state.feedback.status === 'skipped' ? 'bg-gray-400' : 'bg-red-500')}">
+                                    <i data-lucide="${state.feedback.status === 'correct' ? 'check' : (state.feedback.status === 'skipped' ? 'fast-forward' : 'x')}" class="text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-xl ${state.feedback.status === 'correct' ? 'text-green-800' : (state.feedback.status === 'skipped' ? 'text-gray-800' : 'text-red-800')}">
+                                        ${state.feedback.msg}
+                                    </p>
+                                </div>
                             </div>
-                            <button onclick="nextStep()" class="w-full py-4 rounded-2xl font-black text-white ${state.feedback.status === 'correct' ? 'bg-green-500' : 'bg-red-500'}">CONTINUE</button>
+                            <button onclick="nextStep()" class="w-full py-4 rounded-2xl font-black text-white shadow-lg transform active:translate-y-1 transition-all
+                                ${state.feedback.status === 'correct' ? 'bg-green-500 hover:bg-green-600' : (state.feedback.status === 'skipped' ? 'bg-gray-700 hover:bg-gray-800' : 'bg-red-500 hover:bg-red-600')}">
+                                CONTINUE
+                            </button>
                         </div>` : ''}
                 </div>`;
             },
 
             results: () => `
                 <div class="h-screen flex flex-col items-center justify-center p-6 text-center">
-                    <i data-lucide="trophy" class="text-yellow-400 mb-6" size="120"></i>
-                    <h2 class="text-3xl font-black mb-2">Lesson Finished!</h2>
-                    <p class="text-gray-500 mb-8">Great progress today.</p>
-                    <div class="grid grid-cols-2 gap-4 w-full mb-8">
-                        <div class="p-4 bg-orange-50 border-2 border-orange-100 rounded-2xl"><p class="text-xs font-bold text-orange-400 uppercase">XP</p><p class="text-2xl font-black">+50</p></div>
-                        <div class="p-4 bg-blue-50 border-2 border-blue-100 rounded-2xl"><p class="text-xs font-bold text-blue-400 uppercase">Streak</p><p class="text-2xl font-black">${state.user.streak}</p></div>
+                    <div class="relative mb-8">
+                        <i data-lucide="party-popper" class="text-yellow-400 absolute -top-8 -left-8 animate-bounce" size="40"></i>
+                        <div class="w-40 h-40 bg-yellow-100 rounded-full flex items-center justify-center border-8 border-yellow-200">
+                             <i data-lucide="award" class="text-yellow-600" size="80"></i>
+                        </div>
                     </div>
-                    <button onclick="setView('home')" class="w-full bg-blue-500 text-white font-black py-4 rounded-2xl shadow-lg">AWESOME</button>
+                    <h2 class="text-3xl font-black mb-2 text-gray-800">Section Complete!</h2>
+                    <p class="text-gray-500 mb-10 font-medium">You're mastering the language!</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 w-full mb-10">
+                        <div class="p-5 bg-orange-50 border-b-4 border-orange-200 rounded-3xl">
+                            <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Total XP</p>
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="zap" size="16" class="fill-orange-500 text-orange-500"></i>
+                                <p class="text-3xl font-black text-orange-700">+50</p>
+                            </div>
+                        </div>
+                        <div class="p-5 bg-blue-50 border-b-4 border-blue-200 rounded-3xl">
+                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">New Streak</p>
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="flame" size="16" class="fill-blue-500 text-blue-500"></i>
+                                <p class="text-3xl font-black text-blue-700">${state.user.streak}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="setView('home')" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl transform active:scale-95 transition-all uppercase tracking-widest">
+                        Back to Path
+                    </button>
                 </div>`
         };
 
