@@ -103,11 +103,7 @@
             const current = state.activeLesson.exercises[state.activeLesson.currentIndex];
             const isCorrect = selected.trim().toLowerCase() === current.answer.trim().toLowerCase();
 
-            // Speaking mode is more lenient - if we got any result, we count it for this demo
-            // In a real app, you'd use a string similarity algorithm
-            const finalCorrect = current.type === 'speaking' ? (selected.length > 0) : isCorrect;
-
-            if (finalCorrect) {
+            if (isCorrect) {
                 state.feedback = { status: 'correct', msg: 'अति राम्रो! (Excellent!)' };
                 state.user.xp += 10;
                 speak(current.answer);
@@ -139,52 +135,14 @@
             }
         };
 
-        // Improved Start Listening for Mobile
         const startListening = () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
-            if (!SpeechRecognition) {
-                alert("Speech recognition is not supported in this browser. Please try Chrome or Safari.");
-                return;
-            }
-
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'hi-IN'; // Devanagari based
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            recognition.onstart = () => { 
-                state.isListening = true; 
-                render(); 
-            };
-
-            recognition.onend = () => { 
-                state.isListening = false; 
-                render(); 
-            };
-
-            recognition.onerror = (event) => {
-                state.isListening = false;
-                render();
-                if (event.error === 'not-allowed') {
-                    alert("Microphone access denied. Please enable microphone permissions in your browser settings.");
-                } else {
-                    console.error("Speech recognition error:", event.error);
-                }
-            };
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                checkAnswer(transcript);
-            };
-
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error("Recognition start error:", e);
-                state.isListening = false;
-                render();
-            }
+            if (!('webkitSpeechRecognition' in window)) return alert("Not supported");
+            const recognition = new window.webkitSpeechRecognition();
+            recognition.lang = 'hi-IN';
+            recognition.onstart = () => { state.isListening = true; render(); };
+            recognition.onend = () => { state.isListening = false; render(); };
+            recognition.onresult = (e) => checkAnswer(e.results[0][0].transcript);
+            recognition.start();
         };
 
         // --- VIEW TEMPLATES ---
@@ -262,9 +220,7 @@
                                 `).join('')}
                             </div>` : `
                             <div class="flex flex-col items-center py-10">
-                                <button id="micBtn" onclick="startListening()" class="w-32 h-32 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-90 ${state.isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-500'}">
-                                    <i data-lucide="mic" class="text-white" size="48"></i>
-                                </button>
+                                <button onclick="startListening()" class="w-32 h-32 rounded-full flex items-center justify-center shadow-lg ${state.isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-500'}"><i data-lucide="mic" class="text-white" size="48"></i></button>
                                 <p class="mt-4 text-gray-400 font-bold">${state.isListening ? 'Listening...' : 'Tap to Speak'}</p>
                             </div>`}
                     </div>
