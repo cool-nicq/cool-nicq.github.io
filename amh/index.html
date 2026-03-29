@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarya Entertainment</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vegas/2.6.0/vegas.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style type="text/tailwindcss">
+      @theme {
+      /* Custom Neon Colors */
+      --color-neon-cyan: #00F0FF;
+      --color-neon-pink: #FF10F0;
+      --color-neon-amber: #FFBF00;
+      --color-neon-green:#39ff14;
+      --color-neon-red:#ff3131;
+
+      /* Custom Social Media Icons */
+      --color-facebook-bg:#1877F2;
+      --color-twitter-bg:#1DA1F2;
+      --color-instagram-bg:#E1306C;
+      --color-youtube-bg:#FF0000;
+      --color-whatsapp-bg:#25D366;
+      --color-linkedin-bg:#0077B5;
+      --color-twitter-bg:#1DA1F2;
+      --color-tiktok-bg:#000000;
+      --color-facebook-neon:#3B5998;
+      --color-twitter-neon:#55ACEE;
+      --color-instagram-neon:#C13584;
+      --color-youtube-neon:#C40C0C;
+      --color-whatsapp-neon:#25D366;
+      --color-linkedin-neon:#0077B5;
+      --color-twitter-neon:#55ACEE;
+      --color-tiktok-neon:#000000;
+      }
+      /* Custom Vegas overrides */
+      .vegas-timer-progress { @apply bg-neon-pink shadow-[0_0_15px_#FF10F0]; }
+      .vegas-timer-running { @apply bg-neon-cyan; }
+      
+      /* Custom Text Glow - The "Noir" look */
+      .neon-glow {
+        text-shadow: 0 0 10px rgba(0, 240, 255, 0.7),
+        0 0 20px rgba(0, 240, 255, 0.5);
+      }
+      
+      /* Vignette effect to focus on center */
+      .vignette {
+        background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+      }
+
+      /* Scrolled Header Style */
+      header.scrolled {
+        @apply bg-black/80 backdrop-blur-sm;
+      }
+      .heading-font {
+        font-family: 'Syncopate', sans-serif;
+        letter-spacing: -0.05em;
+      }
+
+      /* shine effect on team card */
+      .shine-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .shine-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -150%; /* Starting position far left */
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: skewX(-25deg);
+        z-index: 20; /* Sit above the image but below the text if needed */
+        transition: left 0.7s ease-in-out; /* This enables the mouse-out effect */
+      }
+
+      .shine-card:hover::before {
+        left: 150%; /* Ending position far right */
+      }
+
+      /* Swiper Custom Styles */
+      .swiper-slide {
+        @apply transition-all duration-500 opacity-40 scale-90 blur-[1px] grayscale;
+      }
+      .swiper-slide-active {
+        @apply opacity-100 scale-110 blur-none grayscale-0 z-20 shadow-[0_0_30px_rgba(225,29,72,0.3)];
+      }
+      .gallery-swiper .swiper-slide, .gallery-swiper .swiper-slide-active {
+        @apply !opacity-100 !scale-100 !blur-none !grayscale-0 !shadow-none;
+      }
+    </style>
+  </head>
+  <body class="bg-black text-white">
+    <!-- Social Media Icons -->
+    <div class="fixed top-1/2 -translate-y-1/2 left-0 z-50 hidden md:flex flex-col ml-1">
+      <a href="https://www.facebook.com/profile.php?id=100072342444165" target="_blank" class="w-12 h-12 bg-blue-600 flex items-center justify-center transition-all duration-300 group mb-1">
+      <i class="fab fa-facebook-f group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+      </a>
+      <a href="#" class="w-12 h-12 bg-pink-600 flex items-center justify-center transition-all duration-300 group mb-1">
+      <i class="fab fa-instagram group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+      </a>
+      <a href="#" class="w-12 h-12 bg-red-600 flex items-center justify-center transition-all duration-300 group mb-1">
+      <i class="fab fa-youtube group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+      </a>
+      <a href="#" class="w-12 h-12 bg-neutral-800 flex items-center justify-center transition-all duration-300 group">
+      <i class="fab fa-tiktok group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+      </a>
+    </div>
+
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full p-6 md:p-8 z-30 transition-colors duration-300">
+      <div class="mx-auto flex justify-between items-center">
+        <!-- Brand Logo -->
+        <a href="#" class="text-3xl font-black italic uppercase text-white neon-glow relative z-50">
+        Aarya Entertainment
+        </a>
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:block">
+          <ul class="flex space-x-6 md:space-x-8 text-sm uppercase tracking-widest">
+            <li><a href="#about" class="text-white/70 hover:text-white hover:neon-glow transition-all duration-300">About</a></li>
+            <li><a href="#services" class="text-white/70 hover:text-white hover:neon-glow transition-all duration-300">Services</a></li>
+            <li><a href="#portfolio" class="text-white/70 hover:text-white hover:neon-glow transition-all duration-300">Portfolio</a></li>
+            <li><a href="#team" class="text-white/70 hover:text-white hover:neon-glow transition-all duration-300">Team</a></li>
+            <li><a href="#contact" class="text-white/70 hover:text-white hover:neon-glow transition-all duration-300">Contact</a></li>
+          </ul>
+        </nav>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white relative z-50 focus:outline-none">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile Navigation Overlay -->
+      <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <ul class="space-y-8 text-center text-2xl uppercase tracking-widest font-bold">
+          <li><a href="#about" class="text-white hover:text-neon-cyan hover:neon-glow transition-all duration-300 mobile-link">About</a></li>
+          <li><a href="#services" class="text-white hover:text-neon-cyan hover:neon-glow transition-all duration-300 mobile-link">Services</a></li>
+          <li><a href="#portfolio" class="text-white hover:text-neon-cyan hover:neon-glow transition-all duration-300 mobile-link">Portfolio</a></li>
+          <li><a href="#team" class="text-white hover:text-neon-cyan hover:neon-glow transition-all duration-300 mobile-link">Team</a></li>
+          <li><a href="#contact" class="text-white hover:text-neon-cyan hover:neon-glow transition-all duration-300 mobile-link">Contact</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <!--Main Section-->
+    <main>
+      <!--vegas slider-->
+      <div id="example" class="h-screen">
+        <div class="vegas-content !p-0 pointer-events-none vignette absolute inset-0 z-10"></div>
+        <div class="vegas-content !overflow-visible !p-0 z-20">
+          <div class="absolute top-3/5 -translate-y-1/2 w-full text-center">
+            <ul class="relative h-32 flex items-center justify-center">
+              <li class="hero-item absolute opacity-0 scale-90 tracking-tighter transition-all duration-1000 ease-out pointer-events-none active">
+                <h1 class="heading-font text-5xl md:text-8xl font-black mb-6 uppercase leading-none drop-shadow-2xl">
+                  Unleashing <br><span class="text-rose-600">Pure Talent</span>
+                </h1>
+                <p class="text-gray-200 font-light tracking-[0.3em] uppercase text-sm mb-12 drop-shadow-md">Nepal’s Premier Media House</p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center">
+                  <a href="events.html" class="hero-btn bg-rose-600 hover:bg-rose-700 transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest shadow-lg shadow-rose-600/30">Upcoming Events</a>
+                  <a href="#services" class="hero-btn border border-white/30 hover:bg-white hover:text-black transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest backdrop-blur-sm">Our Services</a>
+                </div>
+              </li>
+              <li class="hero-item absolute opacity-0 scale-90 tracking-tighter transition-all duration-1000 ease-out pointer-events-none active">
+                <h1 class="heading-font text-5xl md:text-8xl font-black mb-6 uppercase leading-none drop-shadow-2xl">
+                  Reality <br><span class="text-rose-600">Talent Show</span>
+                </h1>
+                <p class="text-gray-200 font-light tracking-[0.3em] uppercase text-sm mb-12 drop-shadow-md">Nepal’s Premier Media House</p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center">
+                  <a href="events.html" class="hero-btn bg-rose-600 hover:bg-rose-700 transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest shadow-lg shadow-rose-600/30">Upcoming Events</a>
+                  <a href="#services" class="hero-btn border border-white/30 hover:bg-white hover:text-black transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest backdrop-blur-sm">Our Services</a>
+                </div>
+              </li>
+              <li class="hero-item absolute opacity-0 scale-90 tracking-tighter transition-all duration-1000 ease-out pointer-events-none active">
+                <h1 class="heading-font text-5xl md:text-8xl font-black mb-6 uppercase leading-none drop-shadow-2xl">
+                  Recording <br><span class="text-rose-600">Music Album</span>
+                </h1>
+                <p class="text-gray-200 font-light tracking-[0.3em] uppercase text-sm mb-12 drop-shadow-md">Nepal’s Premier Media House</p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center">
+                  <a href="events.html" class="hero-btn bg-rose-600 hover:bg-rose-700 transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest shadow-lg shadow-rose-600/30">Upcoming Events</a>
+                  <a href="#services" class="hero-btn border border-white/30 hover:bg-white hover:text-black transition px-10 py-4 rounded-full font-bold uppercase text-xs tracking-widest backdrop-blur-sm">Our Services</a>
+                </div>
+              </li>
+            </ul>
+            <!-- <p class="text-white/40 tracking-[0.5em] uppercase text-xs mt-8 animate-pulse">
+              Featured Cast
+              </p> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- About Us Section -->
+      <section id="about" class="py-16 md:py-24 bg-black relative overflow-hidden">
+        <!-- Background elements for depth -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+            <div class="absolute top-1/4 -left-64 w-96 h-96 bg-rose-600/20 rounded-full blur-[128px]"></div>
+            <div class="absolute bottom-1/4 -right-64 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px]"></div>
+        </div>
+
+        <div class="container mx-auto px-6 md:px-12 relative z-10">
+          <div class="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+            <!-- Image Side -->
+            <div class="w-full md:w-1/2">
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-rose-600 to-cyan-500 rounded-xl opacity-30 group-hover:opacity-50 blur-lg transition duration-500"></div>
+                    <div class="relative rounded-xl overflow-hidden border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop" alt="About Aarya Entertainment" class="w-full h-full object-cover transform transition duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    </div>
+                    <!-- Experience Badge -->
+                    <div class="absolute -bottom-6 -right-6 bg-neutral-900 border border-white/10 p-6 rounded-xl shadow-2xl backdrop-blur-md hidden md:block">
+                        <p class="heading-font text-4xl font-bold text-rose-600">15+</p>
+                        <p class="text-xs uppercase tracking-widest text-white/60">Years of<br>Excellence</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Side -->
+            <div class="w-full md:w-1/2 text-left">
+              <h2 class="heading-font text-4xl md:text-5xl font-bold uppercase mb-6 leading-tight">
+                Crafting <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-rose-400">Legends</span>
+              </h2>
+              <p class="text-white/70 text-lg mb-6 leading-relaxed font-light">
+                Aarya Entertainment isn't just a media house; it's a <span class="text-white font-medium">cultural movement</span>. We exist to discover the undiscovered, amplifying voices that need to be heard across Nepal and beyond.
+              </p>
+              <p class="text-white/50 text-sm mb-8 leading-relaxed tracking-wide">
+                From high-stakes reality shows to chart-topping music production, our mission is to bridge the gap between raw talent and the global stage. We combine state-of-the-art technology with creative storytelling to produce content that resonates.
+              </p>
+              
+              <div class="grid grid-cols-2 gap-6 mb-10">
+                <div class="border-l-2 border-rose-600 pl-4">
+                    <h4 class="text-white font-bold uppercase text-sm tracking-wider mb-1">Vision</h4>
+                    <p class="text-white/50 text-xs">To be the global heartbeat of Nepalese entertainment.</p>
+                </div>
+                <div class="border-l-2 border-cyan-500 pl-4">
+                    <h4 class="text-white font-bold uppercase text-sm tracking-wider mb-1">Mission</h4>
+                    <p class="text-white/50 text-xs">Empowering artists through world-class production.</p>
+                </div>
+              </div>
+
+              <a href="#contact" class="inline-flex items-center gap-3 text-rose-500 uppercase text-xs font-bold tracking-[0.2em] hover:text-white transition-colors group">
+                Start Your Journey
+                <i class="fa-solid fa-arrow-right transform group-hover:translate-x-2 transition-transform"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Services Section -->
+      <section id="services" class="py-16 md:py-24 relative overflow-hidden bg-black">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop" alt="Studio Background" class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black"></div>
+        </div>
+
+        <div class="container mx-auto px-6 md:px-12 relative z-10">
+          <div class="text-center mb-16">
+            <h2 class="heading-font text-4xl md:text-5xl font-bold uppercase mb-4">Our 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-rose-400">Services</span>
+            </h2>
+            <p class="text-white/60 max-w-2xl mx-auto text-sm tracking-widest uppercase">Comprehensive media solutions for the modern artist</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Service 1: Audio Production -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-rose-600/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-rose-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-rose-600/50">
+                        <i class="fa-solid fa-microphone-lines text-2xl text-rose-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-rose-500 transition-colors">Audio Production</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">State-of-the-art recording studios equipped for voice-overs, music albums, and sound design with industry-leading engineers.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-rose-500 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service 2: Video Production -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-cyan-500/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-cyan-500/50">
+                        <i class="fa-solid fa-video text-2xl text-cyan-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-cyan-400 transition-colors">Video Production</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">From music videos to commercials, we deliver cinematic visuals using 4K cameras, drone shots, and professional editing.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-cyan-400 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service 3: Event Management -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-500/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-amber-500/50">
+                        <!-- <i class="fa-solid fa-calendar-star text-2xl text-amber-500"></i> -->
+                         <i class="fa-solid fa-calendar-check text-2xl text-amber-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-amber-400 transition-colors">Event Management</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">Full-scale event planning for concerts, award shows, and corporate gatherings, ensuring seamless execution.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service 4: Artist Management -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-purple-500/50">
+                        <i class="fa-solid fa-users-viewfinder text-2xl text-purple-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-purple-400 transition-colors">Artist Management</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">Nurturing talent through PR strategies, brand endorsements, and career guidance to build sustainable stardom.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-purple-400 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service 5: Digital Marketing -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-green-500/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-green-500/50">
+                        <i class="fa-solid fa-hashtag text-2xl text-green-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-green-400 transition-colors">Digital Marketing</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">Amplifying your reach through targeted social media campaigns, SEO, and content strategies tailored for entertainment.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-green-400 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service 6: Equipment Rental -->
+            <div class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-neutral-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/10 group-hover:border-blue-500/50">
+                        <i class="fa-solid fa-camera-retro text-2xl text-blue-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase mb-3 tracking-wide group-hover:text-blue-400 transition-colors">Equipment Rental</h3>
+                    <p class="text-white/50 text-sm leading-relaxed mb-6">Access our inventory of high-end cameras, lighting rigs, and sound systems for your own independent productions.</p>
+                    <a href="#" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-blue-400 transition-colors">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Portfolio Section -->
+      <!-- <section id="portfolio" class="py-16 md:py-24 bg-neutral-900 relative overflow-hidden"> -->
+      <section id="portfolio" class="py-16 md:py-24 bg-neutral-900 relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=1170&auto=format&fit=crop')] bg-cover bg-center bg-fixed">
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/85"></div>
+        <!-- Background Pattern -->
+        <!-- <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div> -->
+        
+        <div class="container mx-auto px-6 md:px-12 relative z-10">
+          <div class="text-center mb-16">
+            <h2 class="heading-font text-4xl md:text-5xl font-bold uppercase mb-4">Our 
+              <span class="text-rose-600">Portfolio</span>
+            </h2>
+            <p class="text-white/60 max-w-2xl mx-auto text-sm tracking-widest uppercase">A showcase of our finest productions</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Portfolio Item 1 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1580321827154-812450ccf214?q=80&w=1000&auto=format&fit=crop" alt="Project 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-rose-500 text-xs font-bold uppercase tracking-widest mb-1">Music Video</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Neon Nights</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 2 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1761853321546-c2c31af3480e?q=80&w=1000&auto=format&fit=crop" alt="Project 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-cyan-500 text-xs font-bold uppercase tracking-widest mb-1">Live Concert</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Summer Fest 2025</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 3 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=1000&auto=format&fit=crop" alt="Project 3" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-amber-500 text-xs font-bold uppercase tracking-widest mb-1">Reality Show</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Voice of Nepal</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 4 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1572160789689-fc4d4b1e95b2?q=80&w=1000&auto=format&fit=crop" alt="Project 4" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-purple-500 text-xs font-bold uppercase tracking-widest mb-1">Documentary</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Himalayan Echoes</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 5 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop" alt="Project 5" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-green-500 text-xs font-bold uppercase tracking-widest mb-1">Commercial</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Brand X Campaign</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 6 -->
+            <div class="group relative overflow-hidden rounded-xl aspect-video cursor-pointer border border-white/5">
+                <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop" alt="Project 6" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p class="text-blue-500 text-xs font-bold uppercase tracking-widest mb-1">Audio Production</p>
+                    <h3 class="text-xl font-bold text-white uppercase heading-font translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Indie Anthology Vol. 1</h3>
+                </div>
+            </div>
+
+          </div>
+          
+          <div class="mt-12 text-center">
+             <a href="#" class="inline-block border border-white/20 hover:bg-white hover:text-black text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300">View All Projects</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gallery and YouTube Section -->
+        <section id="gallery" class="py-16 md:py-24 bg-neutral-900 relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1920')] bg-cover bg-center bg-fixed">
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/85"></div>
+
+      <!-- <section id="gallery" class="py-16 md:py-24 bg-neutral-900 relative"> -->
+        <div class="container mx-auto px-6 md:px-12">
+          <div class="text-center mb-12">
+            <h2 class="heading-font text-4xl font-bold uppercase">The <span class="text-rose-600">Visuals</span></h2>
+            <p class="text-white/70 max-w-3xl mx-auto leading-relaxed mt-4">Experience the moments that defined us.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:h-[600px]">
+            <!-- Left: YouTube -->
+            <div class="w-full h-[300px] lg:h-full rounded-2xl overflow-hidden border border-white/10 relative shadow-2xl shadow-rose-900/20 group">
+              <iframe width="1335" height="751" class="w-full h-full object-cover" src="https://www.youtube.com/embed/KKepVRQrQlc" title="JUN MORI LE HIJO TAK || DIJRAJ PAUDYAL || ANJU SUNAR || ANTINA || RAJESH BHATTARAI ||HOT MUSIC VIDEO" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+              </iframe>
+            </div>
+            <!-- Right: 2x2 Gallery -->
+            <div class="grid grid-cols-2 grid-rows-2 gap-4 h-[300px] lg:h-full">
+               <!-- Gallery A -->
+               <div class="gallery-trigger relative group cursor-pointer overflow-hidden rounded-xl border border-white/10" data-gallery="gallery-a">
+                  <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=800&auto=format&fit=crop" alt="Gallery A" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:grayscale-0 grayscale">
+                  <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition duration-300 flex flex-col items-center justify-center">
+                      <i class="fa-solid fa-images text-3xl text-rose-600 mb-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-300"></i>
+                      <h3 class="text-lg font-bold uppercase tracking-widest">Concerts</h3>
+                  </div>
+               </div>
+               <!-- Gallery B -->
+               <div class="gallery-trigger relative group cursor-pointer overflow-hidden rounded-xl border border-white/10" data-gallery="gallery-b">
+                  <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" alt="Gallery B" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:grayscale-0 grayscale">
+                  <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition duration-300 flex flex-col items-center justify-center">
+                      <i class="fa-solid fa-images text-3xl text-cyan-500 mb-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-300"></i>
+                      <h3 class="text-lg font-bold uppercase tracking-widest">Backstage</h3>
+                  </div>
+               </div>
+               <!-- Gallery C -->
+               <div class="gallery-trigger relative group cursor-pointer overflow-hidden rounded-xl border border-white/10" data-gallery="gallery-c">
+                  <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=800&auto=format&fit=crop" alt="Gallery C" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:grayscale-0 grayscale">
+                  <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition duration-300 flex flex-col items-center justify-center">
+                      <i class="fa-solid fa-images text-3xl text-amber-500 mb-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-300"></i>
+                      <h3 class="text-lg font-bold uppercase tracking-widest">Studio</h3>
+                  </div>
+               </div>
+               <!-- Gallery D -->
+               <div class="gallery-trigger relative group cursor-pointer overflow-hidden rounded-xl border border-white/10" data-gallery="gallery-d">
+                  <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=800&auto=format&fit=crop" alt="Gallery D" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:grayscale-0 grayscale">
+                  <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition duration-300 flex flex-col items-center justify-center">
+                      <i class="fa-solid fa-images text-3xl text-purple-500 mb-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-300"></i>
+                      <h3 class="text-lg font-bold uppercase tracking-widest">Events</h3>
+                  </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Counter Up Stats Section -->
+      <section id="stats" class="py-24 bg-rose-600 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center relative z-10">
+          <div >
+            <h2 class="counter heading-font text-7xl font-bold" data-target="15" data-start="1">15+</h2>
+            <p class="uppercase tracking-widest text-xs font-bold mt-4 opacity-80">Years Experience</p>
+          </div>
+          <div>
+            <h2 class="counter heading-font text-7xl font-bold" data-target="500" data-start="33">500+</h2>
+            <p class="uppercase tracking-widest text-xs font-bold mt-4 opacity-80">Total Recordings</p>
+          </div>
+          <div>
+            <h2 class="counter heading-font text-7xl font-bold" data-target="200" data-start="14">200+</h2>
+            <p class="uppercase tracking-widest text-xs font-bold mt-4 opacity-80">Events Organized</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- What Our Customers Say Section -->
+      <section id="testimonials" class="py-16 md:py-24 bg-black overflow-hidden">
+        <div class="container mx-auto px-6 md:px-12 text-center mb-12">
+          <h2 class="heading-font text-4xl font-bold uppercase">Client 
+            <span class="text-rose-600">Voices</span>
+          </h2>
+          <p class="text-white/70 max-w-3xl mx-auto leading-relaxed mt-4">Real stories from the artists and partners we've elevated.</p>
+        </div>
+        
+        <!-- Swiper Container -->
+        <div class="swiper testimonial-slider w-full max-w-7xl mx-auto px-4 py-12">
+          <div class="swiper-wrapper">
+            <!-- Review 1 -->
+            <div class="swiper-slide bg-neutral-900/80 border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center h-auto select-none">
+              <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-rose-600 shadow-[0_0_15px_rgba(225,29,72,0.5)]">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop" alt="User" class="w-full h-full object-cover">
+              </div>
+              <div class="flex gap-1 text-amber-400 text-xs mb-4">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="text-white/80 text-sm italic mb-6 leading-relaxed">"Aarya Entertainment transformed my career. The production quality for my music video was Hollywood-level. They truly understand the artist's vision."</p>
+              <h4 class="font-bold uppercase text-rose-500 text-sm tracking-widest">Rajesh Hamal</h4>
+              <p class="text-xs text-gray-500 uppercase mt-1">Musician</p>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="h-4 mt-4 opacity-50 grayscale">
+            </div>
+
+            <!-- Review 2 -->
+            <div class="swiper-slide bg-neutral-900/80 border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center h-auto select-none">
+              <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop" alt="User" class="w-full h-full object-cover">
+              </div>
+              <div class="flex gap-1 text-amber-400 text-xs mb-4">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="text-white/80 text-sm italic mb-6 leading-relaxed">"Managing our corporate event with such precision and flair! The team is incredibly professional and the stage setup was mind-blowing."</p>
+              <h4 class="font-bold uppercase text-cyan-400 text-sm tracking-widest">Sarah Thapa</h4>
+              <p class="text-xs text-gray-500 uppercase mt-1">Event Director</p>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="h-4 mt-4 opacity-50 grayscale">
+            </div>
+
+            <!-- Review 3 -->
+            <div class="swiper-slide bg-neutral-900/80 border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center h-auto select-none">
+              <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="User" class="w-full h-full object-cover">
+              </div>
+              <div class="flex gap-1 text-amber-400 text-xs mb-4">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+              </div>
+              <p class="text-white/80 text-sm italic mb-6 leading-relaxed">"The best recording studio in Kathmandu. The sound engineers are wizards. My album sounds crisp, professional, and ready for international radio."</p>
+              <h4 class="font-bold uppercase text-purple-400 text-sm tracking-widest">Bikash Gurung</h4>
+              <p class="text-xs text-gray-500 uppercase mt-1">Indie Artist</p>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="h-4 mt-4 opacity-50 grayscale">
+            </div>
+
+            <!-- Review 4 -->
+            <div class="swiper-slide bg-neutral-900/80 border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center h-auto select-none">
+              <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="User" class="w-full h-full object-cover">
+              </div>
+              <div class="flex gap-1 text-amber-400 text-xs mb-4">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+              <p class="text-white/80 text-sm italic mb-6 leading-relaxed">"Their digital marketing team put us on the map. We saw a 300% increase in engagement after their campaign. Highly recommended!"</p>
+              <h4 class="font-bold uppercase text-green-400 text-sm tracking-widest">Anjali Shrestha</h4>
+              <p class="text-xs text-gray-500 uppercase mt-1">Marketing Head</p>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="h-4 mt-4 opacity-50 grayscale">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Major Clients Section -->
+      <section id="clients" class="py-16 md:py-24 bg-black relative overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://plus.unsplash.com/premium_photo-1661274209157-118069b926f3?q=80&w=1170&auto=format&fit=crop" alt="Clients Background" class="w-full h-full object-cover opacity-10 grayscale">
+        </div>
+
+        <div class="container mx-auto px-6 md:px-12 text-center relative z-10">
+          <h2 class="heading-font text-4xl font-bold uppercase mb-4">Major <span class="text-rose-600">Clients</span></h2>
+          <p class="text-white/60 max-w-2xl mx-auto text-sm tracking-widest uppercase mb-12">Trusted by industry leaders and global brands</p>
+          
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
+            <!-- Client 1 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fab fa-spotify text-4xl text-white/30 group-hover:text-[#1DB954] transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Spotify</span>
+            </div>
+            <!-- Client 2 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fab fa-youtube text-4xl text-white/30 group-hover:text-[#FF0000] transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">YouTube</span>
+            </div>
+            <!-- Client 3 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fab fa-apple text-4xl text-white/30 group-hover:text-white transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Apple Music</span>
+            </div>
+            <!-- Client 4 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fab fa-amazon text-4xl text-white/30 group-hover:text-[#FF9900] transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Amazon</span>
+            </div>
+            <!-- Client 5 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-tv text-4xl text-white/30 group-hover:text-cyan-400 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Kantipur TV</span>
+            </div>
+            <!-- Client 6 -->
+            <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-film text-4xl text-white/30 group-hover:text-purple-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">QFX Cinemas</span>
+            </div>
+             <!-- Client 7 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-music text-4xl text-white/30 group-hover:text-pink-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Sony Music</span>
+            </div> -->
+             <!-- Client 8 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-globe text-4xl text-white/30 group-hover:text-blue-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Universal</span>
+            </div> -->
+             <!-- Client 9 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-wine-glass text-4xl text-white/30 group-hover:text-amber-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Ruslan Vodka</span>
+            </div> -->
+             <!-- Client 10 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-car text-4xl text-white/30 group-hover:text-red-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Hyundai</span>
+            </div> -->
+             <!-- Client 11 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-mobile-alt text-4xl text-white/30 group-hover:text-green-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Ncell</span>
+            </div> -->
+             <!-- Client 12 -->
+            <!-- <div class="group p-6 border border-white/5 rounded-xl bg-white/5 hover:bg-white/10 transition duration-300 hover:border-rose-600/30 flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-building text-4xl text-white/30 group-hover:text-yellow-500 transition duration-300 transform group-hover:scale-110"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white transition">Chaudhary Group</span>
+            </div> -->
+          </div>
+        </div>
+      </section>
+      <!-- Subscribe to Newsletter Section -->
+      <section id="newsletter" class="py-24 relative overflow-hidden border-y border-white/5">
+        <div class="absolute inset-0 z-0">
+          <div class="absolute inset-0 bg-cyan-500/5 backdrop-blur-3xl"></div>
+          <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <div >
+            <h2 class="heading-font text-3xl font-bold mb-4 uppercase tracking-tighter">
+              Stay in the <span class="text-cyan-400">Loop</span>
+            </h2>
+            <p class="text-gray-400 mb-10 text-xs tracking-[0.4em] uppercase font-light">
+              Direct access to Nepal's <span class="text-white font-bold">Media Revolution</span>
+            </p>
+            <form class="flex flex-col md:flex-row gap-0 max-w-2xl mx-auto group shadow-2xl shadow-cyan-500/10">
+              <input type="email" placeholder="YOUR EMAIL ADDRESS" required="" class="flex-1 bg-white/5 border border-white/10 p-5 rounded-l-xl md:rounded-r-none outline-none focus:border-cyan-400 transition text-xs tracking-widest text-white">
+              <button type="submit" class="bg-cyan-500 hover:bg-white text-black font-black py-5 px-10 rounded-r-xl md:rounded-l-none transition-all duration-500 uppercase text-[10px] tracking-[0.3em]">
+              Subscribe
+              </button>
+            </form>
+            <div class="mt-8 flex items-center justify-center gap-4 opacity-30">
+              <div class="h-[1px] w-8 bg-cyan-400"></div>
+              <p class="text-[9px] text-gray-400 uppercase tracking-[0.6em]">Latest News • Event Alerts • Behind the Scenes</p>
+              <div class="h-[1px] w-8 bg-cyan-400"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- The Minds/Team Section -->
+      <section id="team" class="py-16 md:py-24 bg-neutral-900 relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop')] bg-cover bg-center bg-fixed">
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/85"></div>
+
+
+
+     <!-- <section id="team" class="py-16 md:py-24 bg-black relative overflow-hidden"> -->
+      <!-- Background Image -->
+        <!-- <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop" alt="Clients Background" class="w-full h-full object-cover opacity-10 grayscale">
+        </div> -->
+
+        <div class="container mx-auto px-6 md:px-12 text-center relative z-10">
+          <h2 class="heading-font text-4xl font-bold uppercase mb-16">The 
+            <span class="text-rose-600">Minds</span>
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            
+            <div class="shine-card group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+              <div class="aspect-[3/4] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="CEO" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 w-full p-6 text-left transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 class="text-2xl font-bold text-white uppercase heading-font leading-none mb-1">Aarya Sharma</h3>
+                <p class="text-rose-500 text-xs font-bold tracking-widest uppercase mb-4">Creative Director</p>
+                <div class="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-facebook-f"></i></a>
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-twitter"></i></a>
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="shine-card group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+              <div class="aspect-[3/4] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop" alt="Creative Director" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 w-full p-6 text-left transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 class="text-2xl font-bold text-white uppercase heading-font leading-none mb-1">Sujan Dhungana</h3>
+                <p class="text-rose-500 text-xs font-bold tracking-widest uppercase mb-4">Executive Producer</p>
+                <div class="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-instagram"></i></a>
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-behance"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="shine-card group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+              <div class="aspect-[3/4] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="Head of Production" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 w-full p-6 text-left transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 class="text-2xl font-bold text-white uppercase heading-font leading-none mb-1">Rohan Subedi</h3>
+                <p class="text-rose-500 text-xs font-bold tracking-widest uppercase mb-4">The Tech Guy</p>
+                <div class="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-twitter"></i></a>
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="shine-card group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+              <div class="aspect-[3/4] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop" alt="Marketing Head" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
+              <div class="absolute bottom-0 left-0 w-full p-6 text-left transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 class="text-2xl font-bold text-white uppercase heading-font leading-none mb-1">Sita Sharma</h3>
+                <p class="text-rose-500 text-xs font-bold tracking-widest uppercase mb-4">Marketing Head</p>
+                <div class="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-instagram"></i></a>
+                  <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-rose-600 hover:scale-110 transition-all duration-300"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- Contact & Map Section -->
+      <section id="contact" class="py-32 bg-neutral-950">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+          <div class="rounded-3xl overflow-hidden border border-white/10 h-[500px] ">
+            <iframe class="w-full h-full grayscale invert opacity-50" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.896391330152!2d85.33515642496904!3d27.689596969758313!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19599d5d7057%3A0x1c27444dcb5d8b4e!2sAarya%20Media%20House%20Pvt.%20Ltd.!5e0!3m2!1sen!2snp!4v1770890395767!5m2!1sen!2snp" width="600" height="450" style="border:1;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <div  >
+            <h3 class="heading-font text-4xl font-bold mb-8 uppercase">Let's <span class="text-rose-600">Talk</span></h3>
+            <form action="#" method="POST" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <input class="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-rose-600 outline-none transition" placeholder="Name" required="">
+                <input class="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-rose-600 outline-none transition" placeholder="Email" type="email" required="">
+              </div>
+              <input class="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-rose-600 outline-none transition" placeholder="Subject">
+              <textarea class="w-full p-4 h-40 rounded-xl bg-white/5 border border-white/10 focus:border-rose-600 outline-none transition" placeholder="Message" required=""></textarea>
+              <div class="flex justify-start py-2">
+                <div class="g-recaptcha" data-sitekey="6LfoxmQsAAAAAEJ5sGvXSxYI9XB6NOFZ5n70g9XN" data-theme="dark">
+                  <div style="width: 304px; height: 78px;">
+                    <div><iframe title="reCAPTCHA" width="304" height="78" role="presentation" name="a-7mcy4cin8qtu" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" src="https://www.google.com/recaptcha/api2/anchor?ar=1&amp;k=6LfoxmQsAAAAAEJ5sGvXSxYI9XB6NOFZ5n70g9XN&amp;co=ZmlsZTo.&amp;hl=en&amp;v=gYdqkxiddE5aXrugNbBbKgtN&amp;theme=dark&amp;size=normal&amp;anchor-ms=20000&amp;execute-ms=30000&amp;cb=4ue763w6of1u"></iframe></div>
+                    <textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea>
+                  </div>
+                  <iframe style="display: none;"></iframe>
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 py-4 rounded-xl font-bold uppercase text-xs tracking-[0.3em] transition shadow-lg shadow-rose-600/20">
+              Send Inquiry
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    <!--Footer Section-->
+    <footer class="relative z-30 bg-black border-t border-white/10 text-white/70 pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-24">
+          <!-- Company Info -->
+          <div class="lg:col-span-2 space-y-4">
+            <!-- <h3 class="heading-font font-bold text-xl tracking-widest uppercase text-white">Sin City</h3> -->
+            <div class="flex items-center gap-3 mb-8">
+              <div class="w-8 h-8 bg-rose-600 rounded-sm rotate-45 flex items-center justify-center shadow-lg shadow-rose-600/20">
+                <span class="rotate-[-45deg] font-bold text-sm text-white">A</span>
+              </div>
+              <span class="heading-font font-bold text-xl tracking-widest uppercase text-white">Aarya <span class="text-rose-600">Ent.</span></span>
+            </div>
+            <p class="text-sm leading-relaxed">
+              Experience the noir atmosphere. Where shadows tell stories and neon lights reveal the truth.
+            </p>
+            <div class="text-sm">
+              <p>123 Basin City Avenue</p>
+              <p>Old Town, BC 90210</p>
+              <p class="mt-2 text-neon-cyan">contact@sincity.com</p>
+            </div>
+          </div>
+
+          <!-- Footer Quick Links -->
+          <div>
+            <h4 class="heading-font text-sm font-bold uppercase tracking-widest text-rose-600 mb-6">Quick Links</h4>
+            <ul class="space-y-4 text-[11px] font-medium uppercase tracking-widest text-gray-500">
+              <li>
+                <a href="index.html" class="group hover:text-neon-pink transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-link opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-pink"></i>
+                Home
+                </a>
+              </li>
+              <li>
+                <a href="about.html" class="group hover:text-neon-pink transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-link opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-pink"></i>
+                About Us
+                </a>
+              </li>
+              <li>
+                <a href="services.html" class="group hover:text-neon-pink transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-link opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-pink"></i>
+                Our Services
+                </a>
+              </li>
+              <li>
+                <a href="events.html" class="group hover:text-neon-pink transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-link opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-pink"></i>
+                Upcoming Events
+                </a>
+              </li>
+              <li>
+                <a href="gallery.html" class="group hover:text-neon-pink transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-link opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-pink"></i>
+                Visual Gallery
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- Footer Our Services -->
+          <div>
+            <h4 class="heading-font text-sm font-bold uppercase tracking-widest text-rose-600 mb-6">Our Services</h4>
+            <ul class="space-y-4 text-[11px] font-medium uppercase tracking-widest text-gray-500">
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-cyan transition-all duration-300">
+                <i class="fa-solid fa-guitar opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-cyan"></i>
+                <span>Music Recording</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-cyan transition-all duration-300">
+                <i class="fa-solid fa-guitar opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-cyan"></i>
+                <span>Music Video Production</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-cyan transition-all duration-300">
+                <i class="fa-solid fa-guitar opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-cyan"></i>
+                <span>Concert Management</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-cyan transition-all duration-300">
+                <i class="fa-solid fa-guitar opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-cyan"></i>
+                <span>Artists PR</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-cyan transition-all duration-300">
+                <i class="fa-solid fa-guitar opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-cyan"></i>
+                <span>Media Equipment Rental</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- Footer Legal -->
+          <div>
+            <h4 class="heading-font text-sm font-bold uppercase tracking-widest text-rose-600 mb-6">Legal</h4>
+            <ul class="space-y-4 text-[11px] font-medium uppercase tracking-widest text-gray-500">
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-amber transition-all duration-300">
+                <i class="fa-solid fa-book opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-amber"></i>
+                <span>Terms &amp; Conditions</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-amber transition-all duration-300">
+                <i class="fa-solid fa-book opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-amber"></i>
+                <span>Privacy Policy</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-amber transition-all duration-300">
+                <i class="fa-solid fa-book opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-amber"></i>
+                <span>Cookie Policy</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-amber transition-all duration-300">
+                <i class="fa-solid fa-book opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-amber"></i>
+                <span>Copyright</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="group flex items-center gap-2 hover:text-neon-amber transition-all duration-300">
+                <i class="fa-solid fa-book opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-neon-amber"></i>
+                <span>Disclaimer</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Bottom Bar -->
+        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-xs tracking-wider">&copy; 2026 Aarya Ent. &copy; All rights reserved.</p>
+          <!-- Social Links -->
+          <div class="flex space-x-6">
+            <!-- Facebook -->
+            <a href="#" class="hover:text-facebook-bg transition-colors" aria-label="Facebook">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+              </svg>
+            </a>
+            <!-- Twitter -->
+            <!-- <a href="#" class="hover:text-twitter-bg transition-colors" aria-label="Twitter">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+              </a> -->
+            <!-- Instagram -->
+            <a href="#" class="hover:text-instagram-bg transition-colors" aria-label="Instagram">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.85-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <!--Youtube-->
+            <a href="#" class="hover:text-[#FF0000] transition-colors" aria-label="YouTube">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+            <!-- Tiktok -->
+            <a href="#" class="hover:text-tiktok-bg transition-colors" aria-label="TikTok">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
+              </svg>
+            </a>
+            <!-- Linkedin -->
+            <!-- <a href="#" class="hover:text-linkedin-bg transition-colors" aria-label="LinkedIn">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+              </a> -->
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white/50 hover:text-white transition z-50">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <div class="w-full max-w-6xl h-[80vh] relative">
+            <div class="swiper gallery-swiper w-full h-full rounded-xl overflow-hidden">
+                <div class="swiper-wrapper" id="lightbox-wrapper">
+                    <!-- Slides injected here -->
+                </div>
+                <div class="swiper-button-next !text-rose-600"></div>
+                <div class="swiper-button-prev !text-rose-600"></div>
+                <div class="swiper-pagination !bottom-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!--Script Section-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vegas/2.6.0/vegas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+      $("#example").vegas({
+            delay: 5500,
+            timer: true,
+            transition: 'blur', // Changed to blur for a more stylized feel
+            animation: 'random',
+            slides: [
+                { src: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4" },
+                // { src: "https://vegas.jaysalvat.com/img/unsplash2.jpg",
+                //     video: {
+                //         src: ['https://vegas.jaysalvat.com/videos/video.mp4'],
+                //         loop: false, muted: true
+                //     }
+                // },
+                { src: "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2" },
+                { src: "https://images.unsplash.com/photo-1504805572947-34fad45aed93" }
+            ],
+            walk: function (index) {
+                const $items = $('.hero-item');
+                
+                // Reset all
+                $items.removeClass('active opacity-100 scale-100 tracking-normal pointer-events-auto')
+                      .addClass('opacity-0 scale-90 tracking-tighter pointer-events-none');
+      
+                // Activate current index
+                setTimeout(() => {
+                    $items.eq(index)
+                        .addClass('active opacity-100 scale-100 tracking-normal pointer-events-auto')
+                        .removeClass('opacity-0 scale-90 tracking-tighter pointer-events-none');
+                }, 500);
+            },
+            overlay: 'https://cdnjs.cloudflare.com/ajax/libs/vegas/2.6.0/overlays/08.png' // Lined overlay for "comic" feel
+      });
+      
+      // Mobile Menu Toggle
+      $('#mobile-menu-btn').on('click', function() {
+          const $menu = $('#mobile-menu');
+          const $icon = $(this).find('path');
+          
+          if ($menu.hasClass('opacity-0')) {
+              $menu.removeClass('opacity-0 pointer-events-none');
+              $icon.attr('d', 'M6 18L18 6M6 6l12 12'); // Close icon
+          } else {
+              $menu.addClass('opacity-0 pointer-events-none');
+              $icon.attr('d', 'M4 6h16M4 12h16M4 18h16'); // Hamburger icon
+          }
+      });
+      
+      // Close menu when a link is clicked
+      $('.mobile-link').on('click', function() {
+          $('#mobile-menu-btn').trigger('click');
+      });
+      
+      // Header scroll effect
+      $(window).on('scroll', function() {
+          if ($(window).scrollTop() > 50) {
+              $('header').addClass('scrolled');
+          } else {
+              $('header').removeClass('scrolled');
+          }
+      });
+
+      // Testimonial Swiper
+      var swiper = new Swiper(".testimonial-slider", {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        centeredSlides: true,
+        loop: true,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+        breakpoints: {
+          640: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 3,
+            spaceBetween: 40,
+          },
+        },
+      });
+
+      // Gallery Lightbox Logic
+      const galleryData = {
+        'gallery-a': [
+            'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200',
+            'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1200',
+            'https://images.unsplash.com/photo-1459749411177-0473ef7161a9?q=80&w=1200'
+        ],
+        'gallery-b': [
+            'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=1200',
+            'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200',
+            'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200'
+        ],
+        'gallery-c': [
+            'https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=1200',
+            'https://images.unsplash.com/photo-1478737270239-2f02b77ac6d5?q=80&w=1200',
+            'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=1200'
+        ],
+        'gallery-d': [
+            'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200',
+            'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1200',
+            'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200'
+        ]
+      };
+
+      let gallerySwiper;
+
+      $('.gallery-trigger').on('click', function() {
+          const galleryId = $(this).data('gallery');
+          const images = galleryData[galleryId];
+          const $wrapper = $('#lightbox-wrapper');
+          
+          if (!images) return;
+
+          $wrapper.empty();
+          
+          images.forEach(img => {
+              $wrapper.append(`
+                  <div class="swiper-slide flex items-center justify-center bg-black px-6 md:px-20">
+                      <img src="${img}" class="max-w-full max-h-full object-contain" />
+                  </div>
+              `);
+          });
+
+          $('#lightbox-modal').removeClass('hidden');
+          setTimeout(() => $('#lightbox-modal').removeClass('opacity-0'), 10);
+
+          if (gallerySwiper) {
+              gallerySwiper.destroy();
+          }
+
+          gallerySwiper = new Swiper(".gallery-swiper", {
+              navigation: {
+                  nextEl: ".swiper-button-next",
+                  prevEl: ".swiper-button-prev",
+              },
+              pagination: {
+                  el: ".swiper-pagination",
+                  clickable: true,
+              },
+          });
+      });
+
+      $('#close-lightbox').on('click', function() {
+          $('#lightbox-modal').addClass('opacity-0');
+          setTimeout(() => $('#lightbox-modal').addClass('hidden'), 300);
+      });
+
+      // Counter Up Animation
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(counter => {
+              const target = +counter.getAttribute('data-target');
+              const start = +counter.getAttribute('data-start') || 0;
+              const duration = 2000; // 2 seconds animation
+              const startTime = performance.now();
+
+              const updateCounter = (currentTime) => {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                
+                // Calculate current value based on progress
+                const current = Math.floor(start + (target - start) * progress);
+                
+                counter.innerText = current + "+";
+
+                if (progress < 1) {
+                  requestAnimationFrame(updateCounter);
+                }
+              };
+              
+              requestAnimationFrame(updateCounter);
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      const statsSection = document.querySelector('#stats');
+      if (statsSection) observer.observe(statsSection);
+    </script>
+  </body>
+
+</html>
