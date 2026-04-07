@@ -1,69 +1,109 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Class Redirect</title>
+  <title>Online Class Redirect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e3a8a, #9333ea);
+    }
+  </style>
+
   <script>
-    // Format: YYYY-MM-DD
     const schedule = {
-      // BCSL-056
-      "2026-04-11": "https://tinyurl.com/7u47ebmw",
-      "2026-04-18": "https://tinyurl.com/7u47ebmw",
-      "2026-04-25": "https://tinyurl.com/7u47ebmw",
-      "2026-05-02": "https://tinyurl.com/7u47ebmw",
-      "2026-05-16": "https://tinyurl.com/7u47ebmw",
+      // BCSL-056 (Morning)
+      "2026-04-11": { url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-04-18": { url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-04-25": { url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-05-02": { url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-05-16": { url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
 
-      // BCSL-057
-      "2026-04-11_2": "https://tinyurl.com/5auxf8p9",
-      "2026-04-18_2": "https://tinyurl.com/5auxf8p9",
-      "2026-04-25_2": "https://tinyurl.com/5auxf8p9",
-      "2026-05-02_2": "https://tinyurl.com/5auxf8p9",
-      "2026-05-16_2": "https://tinyurl.com/5auxf8p9",
+      // BCSL-057 (Afternoon)
+      "2026-04-11_2": { url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-04-18_2": { url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-04-25_2": { url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-05-02_2": { url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-05-16_2": { url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
 
-      // BCSL-058
-      "2026-04-09": "https://tinyurl.com/3wkk2wjm",
-      "2026-04-16": "https://tinyurl.com/3wkk2wjm",
-      "2026-04-23": "https://tinyurl.com/3wkk2wjm",
-      "2026-05-07": "https://tinyurl.com/3wkk2wjm",
-      "2026-05-14": "https://tinyurl.com/3wkk2wjm"
+      // BCSL-058 (Evening)
+      "2026-04-09": { url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-04-16": { url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-04-23": { url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-05-07": { url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-05-14": { url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 }
     };
 
     function getTodayDate() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      return `${yyyy}-${mm}-${dd}`;
+      const d = new Date();
+      return d.toISOString().split("T")[0];
     }
 
-    function redirectToClass() {
+    function checkClass() {
       const today = getTodayDate();
-
-      // Since two classes exist on same date (056 and 057),
-      // we check time to decide which one
       const now = new Date();
-      const hours = now.getHours();
+      const hour = now.getHours();
 
-      let key = today;
+      let found = null;
 
-      // Afternoon class (BCSL-057)
-      if (hours >= 13) {
-        if (schedule[today + "_2"]) {
-          key = today + "_2";
+      // Check all possible keys
+      for (let key in schedule) {
+        if (key.startsWith(today)) {
+          const cls = schedule[key];
+          if (hour >= cls.start && hour < cls.end) {
+            found = cls;
+            break;
+          }
         }
       }
 
-      if (schedule[key]) {
-        window.location.href = schedule[key];
+      if (found) {
+        document.getElementById("status").innerHTML =
+          "Redirecting to your class...";
+        
+        setTimeout(() => {
+          window.location.href = found.url;
+        }, 2000);
       } else {
-        document.body.innerHTML = "<h2>No class scheduled for today.</h2>";
+        document.getElementById("status").innerHTML =
+          "No active class right now.";
       }
     }
 
-    window.onload = redirectToClass;
+    window.onload = checkClass;
   </script>
 </head>
-<body>
-  <h2>Checking for today's class...</h2>
+
+<body class="flex items-center justify-center min-h-screen text-white">
+
+  <div class="bg-white/10 backdrop-blur-lg p-10 rounded-2xl shadow-2xl text-center animate-fade-in">
+    
+    <h1 class="text-3xl font-bold mb-4">📚 Online Class Portal</h1>
+    
+    <p id="status" class="text-lg animate-pulse">
+      Checking today's schedule...
+    </p>
+
+    <div class="mt-6">
+      <button onclick="checkClass()" 
+        class="px-6 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition transform hover:scale-105">
+        🔄 Check Again
+      </button>
+    </div>
+
+  </div>
+
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 1s ease-out;
+    }
+  </style>
+
 </body>
 </html>
