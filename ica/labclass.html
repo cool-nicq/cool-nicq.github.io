@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class Redirect</title>
+  <script>
+    // Format: YYYY-MM-DD
+    const schedule = {
+      // BCSL-056
+      "2026-04-11": "https://tinyurl.com/7u47ebmw",
+      "2026-04-18": "https://tinyurl.com/7u47ebmw",
+      "2026-04-25": "https://tinyurl.com/7u47ebmw",
+      "2026-05-02": "https://tinyurl.com/7u47ebmw",
+      "2026-05-16": "https://tinyurl.com/7u47ebmw",
+
+      // BCSL-057
+      "2026-04-11_2": "https://tinyurl.com/5auxf8p9",
+      "2026-04-18_2": "https://tinyurl.com/5auxf8p9",
+      "2026-04-25_2": "https://tinyurl.com/5auxf8p9",
+      "2026-05-02_2": "https://tinyurl.com/5auxf8p9",
+      "2026-05-16_2": "https://tinyurl.com/5auxf8p9",
+
+      // BCSL-058
+      "2026-04-09": "https://tinyurl.com/3wkk2wjm",
+      "2026-04-16": "https://tinyurl.com/3wkk2wjm",
+      "2026-04-23": "https://tinyurl.com/3wkk2wjm",
+      "2026-05-07": "https://tinyurl.com/3wkk2wjm",
+      "2026-05-14": "https://tinyurl.com/3wkk2wjm"
+    };
+
+    function getTodayDate() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function redirectToClass() {
+      const today = getTodayDate();
+
+      // Since two classes exist on same date (056 and 057),
+      // we check time to decide which one
+      const now = new Date();
+      const hours = now.getHours();
+
+      let key = today;
+
+      // Afternoon class (BCSL-057)
+      if (hours >= 13) {
+        if (schedule[today + "_2"]) {
+          key = today + "_2";
+        }
+      }
+
+      if (schedule[key]) {
+        window.location.href = schedule[key];
+      } else {
+        document.body.innerHTML = "<h2>No class scheduled for today.</h2>";
+      }
+    }
+
+    window.onload = redirectToClass;
+  </script>
+</head>
+<body>
+  <h2>Checking for today's class...</h2>
+</body>
+</html>
