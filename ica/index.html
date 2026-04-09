@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Class Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e3a8a, #9333ea);
+    }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.8s ease-out;
+    }
+  </style>
+
+  <script>
+    const schedule = {
+      "2026-04-09": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-04-11": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-04-11_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-04-16": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-04-18": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-04-18_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-04-23": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-04-25": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-04-25_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-05-02": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-05-02_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
+      "2026-05-07": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-05-14": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
+      "2026-05-16": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
+      "2026-05-16_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 }
+    };
+
+    let activeUrl = null;
+    let fallbackUrl = null;
+    let isRedirecting = false;
+
+    function getKathmanduTime() {
+      return new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kathmandu"}));
+    }
+
+    function formatTime(hour) {
+      const suffix = hour >= 12 ? "PM" : "AM";
+      const displayHour = hour % 12 || 12;
+      return `${displayHour}:00 ${suffix}`;
+    }
+
+    function updateClock() {
+      const ktmDate = getKathmanduTime();
+      const timeString = ktmDate.toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById("clock").innerText = timeString;
+      
+      if (ktmDate.getSeconds() === 0) {
+        checkClass();
+      }
+    }
+
+    function checkClass() {
+      const ktmDate = getKathmanduTime();
+      
+      const year = ktmDate.getFullYear();
+      const month = String(ktmDate.getMonth() + 1).padStart(2, '0');
+      const day = String(ktmDate.getDate()).padStart(2, '0');
+      const today = `${year}-${month}-${day}`;
+      
+      const currentTime = ktmDate.getHours() + (ktmDate.getMinutes() / 60);
+      
+      const statusEl = document.getElementById("status");
+      const btnEl = document.getElementById("actionBtn");
+      const titleEl = document.getElementById("mainTitle");
+      
+      let todaysClasses = [];
+      for (let key in schedule) {
+        if (key.startsWith(today)) {
+          todaysClasses.push(schedule[key]);
+        }
+      }
+
+      const targetClass = todaysClasses.find(c => 
+        currentTime >= (c.start - 0.25) && currentTime < c.end
+      );
+
+      if (targetClass) {
+        activeUrl = targetClass.url;
+        const isEarly = currentTime < targetClass.start;
+        
+        // Update Title to Subject Name
+        titleEl.innerText = targetClass.name;
+        
+        statusEl.innerHTML = isEarly ? `Starts at ${formatTime(targetClass.start)}.<br>Auto-joining soon...` : `Class is in progress!`;
+        
+        btnEl.innerHTML = "🚀 Join Now";
+        btnEl.className = "px-10 py-4 bg-green-500 hover:bg-green-600 border border-green-400 rounded-xl transition transform hover:scale-105 active:scale-95 font-bold shadow-xl text-lg w-full";
+
+        if (!isRedirecting) {
+          isRedirecting = true;
+          setTimeout(() => {
+            if (activeUrl) window.location.href = activeUrl;
+          }, 5000);
+        }
+
+      } else {
+        activeUrl = null;
+        isRedirecting = false;
+        
+        const nextClass = todaysClasses
+          .filter(c => currentTime < c.start)
+          .sort((a, b) => a.start - b.start)[0];
+
+        if (nextClass) {
+          fallbackUrl = nextClass.url;
+          // Update Title to Upcoming Subject Name
+          titleEl.innerText = nextClass.name;
+          
+          statusEl.innerHTML = `Today at ${formatTime(nextClass.start)}.`;
+          btnEl.innerHTML = "🔗 Join Manually";
+          btnEl.className = "px-8 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl transition transform hover:scale-105 active:scale-95 font-medium w-full";
+        } else {
+          fallbackUrl = null;
+          titleEl.innerText = "No Classes";
+          btnEl.innerHTML = "🔄 Refresh Status";
+          btnEl.className = "px-8 py-3 bg-white/10 opacity-50 border border-white/10 rounded-xl transition w-full";
+          statusEl.innerText = todaysClasses.length > 0 ? "Today's sessions are finished." : "No classes scheduled today.";
+        }
+      }
+    }
+
+    function handleBtnClick() {
+      const targetUrl = activeUrl || fallbackUrl;
+      if (targetUrl) {
+        window.open(targetUrl, '_blank');
+      } else {
+        checkClass();
+      }
+    }
+
+    window.onload = () => {
+      checkClass();
+      updateClock();
+      setInterval(updateClock, 1000);
+    };
+  </script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen text-white p-4">
+
+  <div class="bg-white/10 backdrop-blur-lg p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-md w-full animate-fade-in border border-white/20">
+    
+    <div id="clock" class="text-3xl font-mono mb-2 opacity-90 tracking-widest text-yellow-200">00:00:00</div>
+    <div class="text-[10px] uppercase tracking-[0.3em] opacity-50 mb-8">Kathmandu Time (NPT)</div>
+
+    <div class="text-6xl mb-4">🗓️</div>
+    
+    <h1 id="mainTitle" class="text-4xl font-extrabold mb-6 tracking-tight">Class Portal</h1>
+    
+    <div class="min-h-[80px] flex items-center justify-center">
+      <p id="status" class="text-xl leading-relaxed opacity-95 text-white/80">
+        Syncing schedule...
+      </p>
+    </div>
+
+    <div class="mt-8">
+      <button id="actionBtn" onclick="handleBtnClick()">
+        🔗 Join Manually
+      </button>
+    </div>
+
+    <div class="mt-8 flex flex-col gap-2">
+        <p class="text-[10px] opacity-40 uppercase tracking-widest">Auto-joins 15m before start</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
