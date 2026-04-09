@@ -64,11 +64,10 @@
 
     function checkClass() {
       const ktmDate = getKathmanduTime();
-      
       const year = ktmDate.getFullYear();
       const month = String(ktmDate.getMonth() + 1).padStart(2, '0');
       const day = String(ktmDate.getDate()).padStart(2, '0');
-      const today = `${year}-${month}-${day}`;
+      const todayStr = `${year}-${month}-${day}`;
       
       const currentTime = ktmDate.getHours() + (ktmDate.getMinutes() / 60);
       
@@ -78,7 +77,7 @@
       
       let todaysClasses = [];
       for (let key in schedule) {
-        if (key.startsWith(today)) {
+        if (key.startsWith(todayStr)) {
           todaysClasses.push(schedule[key]);
         }
       }
@@ -90,44 +89,52 @@
       if (targetClass) {
         activeUrl = targetClass.url;
         const isEarly = currentTime < targetClass.start;
-        
-        // Update Title to Subject Name
         titleEl.innerText = targetClass.name;
-        
         statusEl.innerHTML = isEarly ? `Starts at ${formatTime(targetClass.start)}.<br>Auto-joining soon...` : `Class is in progress!`;
-        
         btnEl.innerHTML = "🚀 Join Now";
         btnEl.className = "px-10 py-4 bg-green-500 hover:bg-green-600 border border-green-400 rounded-xl transition transform hover:scale-105 active:scale-95 font-bold shadow-xl text-lg w-full";
 
         if (!isRedirecting) {
           isRedirecting = true;
-          setTimeout(() => {
-            if (activeUrl) window.location.href = activeUrl;
-          }, 5000);
+          setTimeout(() => { if (activeUrl) window.location.href = activeUrl; }, 5000);
         }
 
       } else {
         activeUrl = null;
         isRedirecting = false;
         
-        const nextClass = todaysClasses
-          .filter(c => currentTime < c.start)
-          .sort((a, b) => a.start - b.start)[0];
+        const nextToday = todaysClasses.filter(c => currentTime < c.start).sort((a, b) => a.start - b.start)[0];
 
-        if (nextClass) {
-          fallbackUrl = nextClass.url;
-          // Update Title to Upcoming Subject Name
-          titleEl.innerText = nextClass.name;
-          
-          statusEl.innerHTML = `Today at ${formatTime(nextClass.start)}.`;
+        if (nextToday) {
+          fallbackUrl = nextToday.url;
+          titleEl.innerText = nextToday.name;
+          statusEl.innerHTML = `Today at ${formatTime(nextToday.start)}.`;
           btnEl.innerHTML = "🔗 Join Manually";
           btnEl.className = "px-8 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl transition transform hover:scale-105 active:scale-95 font-medium w-full";
         } else {
+          // No classes left today, find the next available day in the entire schedule
           fallbackUrl = null;
-          titleEl.innerText = "No Classes";
+          titleEl.innerText = "No Classes Today";
           btnEl.innerHTML = "🔄 Refresh Status";
           btnEl.className = "px-8 py-3 bg-white/10 opacity-50 border border-white/10 rounded-xl transition w-full";
-          statusEl.innerText = todaysClasses.length > 0 ? "Today's sessions are finished." : "No classes scheduled today.";
+
+          // Scan for the next chronological date
+          let upcomingDays = Object.keys(schedule)
+            .map(k => k.split('_')[0]) // remove the _2 suffix
+            .filter(d => d > todayStr)
+            .sort();
+
+          if (upcomingDays.length > 0) {
+            const nextDateStr = upcomingDays[0];
+            const nextDateObj = new Date(nextDateStr);
+            const todayObj = new Date(todayStr);
+            const diffTime = Math.abs(nextDateObj - todayObj);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            statusEl.innerHTML = `Next class after ${diffDays} day${diffDays > 1 ? 's' : ''},<br><span class="text-sm opacity-60">(${nextDateStr})</span>`;
+          } else {
+            statusEl.innerText = "All scheduled sessions are finished.";
+          }
         }
       }
     }
@@ -174,6 +181,7 @@
 
     <div class="mt-8 flex flex-col gap-2">
         <p class="text-[10px] opacity-40 uppercase tracking-widest">Auto-joins 15m before start</p>
+        <p class="text-[10px] opacity-40 uppercase tracking-widest text-yellow-100">Opens in a new tab</p>
     </div>
 
   </div>
