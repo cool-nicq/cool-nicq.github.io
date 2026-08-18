@@ -1,187 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Class Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Class Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    body {
-      background: linear-gradient(135deg, #1e3a8a, #9333ea);
+<style>
+  body { background: linear-gradient(135deg, #1e3a8a, #9333ea); }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 0.8s ease-out; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+</style>
+
+<script>
+  // ---------------------------------------------------------------------
+  // SCHEDULE — edit this array to add/change classes.
+  // date:  "YYYY-MM-DD"
+  // start / end: decimal hours in Kathmandu time (19.5 = 7:30 PM)
+  // Multiple subjects can share the same date — just add more entries.
+  // Color is assigned automatically per subject name (see COLOR_PALETTE),
+  // or you can force one by adding a `color` field, e.g. color: "rose".
+  // ---------------------------------------------------------------------
+  const classes = [
+    { date: "2026-08-20", name: "MCS-022", url: "https://tinyurl.com/djvx8ztr", start: 19.5, end: 20.5 },
+    { date: "2026-08-27", name: "MCS-022", url: "https://tinyurl.com/djvx8ztr", start: 19.5, end: 20.5 },
+    { date: "2026-09-03", name: "MCS-022", url: "https://tinyurl.com/djvx8ztr", start: 19.5, end: 20.5 },
+    { date: "2026-09-10", name: "MCS-022", url: "https://tinyurl.com/djvx8ztr", start: 19.5, end: 20.5 },
+    { date: "2026-09-17", name: "MCS-022", url: "https://tinyurl.com/djvx8ztr", start: 19.5, end: 20.5 }
+    // Example of adding another subject later:
+    // { date: "2026-08-21", name: "MCS-023", url: "https://example.com/join", start: 18, end: 19 },
+  ];
+
+  const COLOR_PALETTE = [
+    { bg: "bg-blue-500",    text: "text-blue-100",    dot: "bg-blue-400"    },
+    { bg: "bg-purple-500",  text: "text-purple-100",  dot: "bg-purple-400"  },
+    { bg: "bg-emerald-500", text: "text-emerald-100", dot: "bg-emerald-400" },
+    { bg: "bg-amber-500",   text: "text-amber-100",   dot: "bg-amber-400"   },
+    { bg: "bg-rose-500",    text: "text-rose-100",    dot: "bg-rose-400"    },
+    { bg: "bg-cyan-500",    text: "text-cyan-100",    dot: "bg-cyan-400"    }
+  ];
+
+  const subjectColors = {};
+  function colorFor(name) {
+    if (!subjectColors[name]) {
+      const idx = Object.keys(subjectColors).length % COLOR_PALETTE.length;
+      subjectColors[name] = COLOR_PALETTE[idx];
     }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    return subjectColors[name];
+  }
+
+  // Stable id per class instance, used to avoid re-firing notifications/sounds
+  function idFor(c) { return `${c.date}__${c.name}__${c.start}`; }
+
+  let activeUrl = null;
+  let fallbackUrl = null;
+  let isRedirecting = false;
+
+  let notificationsEnabled = false;
+  let soundEnabled = false;
+  let audioCtx = null;
+
+  const notifiedSoon = new Set();
+  const notifiedLive = new Set();
+
+  function getKathmanduTime() {
+    return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kathmandu" }));
+  }
+
+  function formatTime(hour) {
+    const suffix = hour >= 12 ? "PM" : "AM";
+    let displayHour = Math.floor(hour) % 12 || 12;
+    const minutes = Math.round((hour % 1) * 60);
+    const minuteStr = minutes === 0 ? "00" : String(minutes).padStart(2, "0");
+    return `${displayHour}:${minuteStr} ${suffix}`;
+  }
+
+  function formatDateLabel(dateStr) {
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+
+  function sortedClasses() {
+    return [...classes].sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return a.start - b.start;
+    });
+  }
+
+  // ---------------- Notifications & sound ----------------
+
+  function requestNotifications() {
+    if (!("Notification" in window)) {
+      alert("This browser doesn't support notifications.");
+      return;
     }
-    .animate-fade-in {
-      animation: fade-in 0.8s ease-out;
+    Notification.requestPermission().then(perm => {
+      notificationsEnabled = perm === "granted";
+      updateToggleButtons();
+    });
+  }
+
+  function enableSound() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-  </style>
+    audioCtx.resume();
+    soundEnabled = true;
+    playBeep(true); // quick confirmation blip
+    updateToggleButtons();
+  }
 
-  <script>
-    const schedule = {
-      "2026-04-09": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
-      "2026-04-11": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
-      "2026-04-11_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
-      "2026-04-16": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
-      "2026-04-18": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
-      "2026-04-18_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
-      "2026-04-23": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
-      "2026-04-25": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
-      "2026-04-25_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
-      "2026-05-02": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
-      "2026-05-02_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 },
-      "2026-05-07": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
-      "2026-05-14": { name: "BCSL-058", url: "https://tinyurl.com/3wkk2wjm", start: 18, end: 20 },
-      "2026-05-16": { name: "BCSL-056", url: "https://tinyurl.com/7u47ebmw", start: 10, end: 12 },
-      "2026-05-16_2": { name: "BCSL-057", url: "https://tinyurl.com/5auxf8p9", start: 15, end: 17 }
-    };
+  function playBeep(quiet) {
+    if (!soundEnabled || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    [0, 0.18].forEach((offset, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = quiet ? 660 : 880;
+      gain.gain.setValueAtTime(0.0001, now + offset);
+      gain.gain.exponentialRampToValueAtTime(quiet ? 0.08 : 0.15, now + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.15);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.16);
+    });
+  }
 
-    let activeUrl = null;
-    let fallbackUrl = null;
-    let isRedirecting = false;
-
-    function getKathmanduTime() {
-      return new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kathmandu"}));
+  function notify(title, body) {
+    if (notificationsEnabled && Notification.permission === "granted") {
+      new Notification(title, { body });
     }
+  }
 
-    function formatTime(hour) {
-      const suffix = hour >= 12 ? "PM" : "AM";
-      const displayHour = hour % 12 || 12;
-      return `${displayHour}:00 ${suffix}`;
+  function updateToggleButtons() {
+    const nBtn = document.getElementById("notifBtn");
+    const sBtn = document.getElementById("soundBtn");
+    if (nBtn) {
+      nBtn.innerText = notificationsEnabled ? "🔔 Notifications On" : "🔕 Enable Notifications";
+      nBtn.disabled = notificationsEnabled;
+      nBtn.classList.toggle("opacity-50", notificationsEnabled);
     }
+    if (sBtn) {
+      sBtn.innerText = soundEnabled ? "🔊 Sound On" : "🔈 Enable Sound";
+      sBtn.disabled = soundEnabled;
+      sBtn.classList.toggle("opacity-50", soundEnabled);
+    }
+  }
 
-    function updateClock() {
-      const ktmDate = getKathmanduTime();
-      const timeString = ktmDate.toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById("clock").innerText = timeString;
-      
-      if (ktmDate.getSeconds() === 0) {
-        checkClass();
+  // ---------------- Core state ----------------
+
+  function checkClass() {
+    const ktmDate = getKathmanduTime();
+    const year = ktmDate.getFullYear();
+    const month = String(ktmDate.getMonth() + 1).padStart(2, "0");
+    const day = String(ktmDate.getDate()).padStart(2, "0");
+    const todayStr = `${year}-${month}-${day}`;
+    const currentTime = ktmDate.getHours() + ktmDate.getMinutes() / 60;
+
+    const statusEl = document.getElementById("status");
+    const btnEl = document.getElementById("actionBtn");
+    const titleEl = document.getElementById("mainTitle");
+    const badgeEl = document.getElementById("mainBadge");
+
+    const todaysClasses = classes.filter(c => c.date === todayStr);
+
+    // --- notifications / sound for today's classes ---
+    todaysClasses.forEach(c => {
+      const id = idFor(c);
+      const minsToStart = (c.start - currentTime) * 60;
+      if (!notifiedSoon.has(id) && minsToStart <= 5 && minsToStart > -1) {
+        notifiedSoon.add(id);
+        notify(`${c.name} starting soon`, `Starts at ${formatTime(c.start)} — join link will open automatically.`);
+        playBeep(false);
       }
-    }
-
-    function checkClass() {
-      const ktmDate = getKathmanduTime();
-      const year = ktmDate.getFullYear();
-      const month = String(ktmDate.getMonth() + 1).padStart(2, '0');
-      const day = String(ktmDate.getDate()).padStart(2, '0');
-      const todayStr = `${year}-${month}-${day}`;
-      
-      const currentTime = ktmDate.getHours() + (ktmDate.getMinutes() / 60);
-      
-      const statusEl = document.getElementById("status");
-      const btnEl = document.getElementById("actionBtn");
-      const titleEl = document.getElementById("mainTitle");
-      
-      let todaysClasses = [];
-      for (let key in schedule) {
-        if (key.startsWith(todayStr)) {
-          todaysClasses.push(schedule[key]);
-        }
+      if (!notifiedLive.has(id) && currentTime >= c.start && currentTime < c.end) {
+        notifiedLive.add(id);
+        notify(`${c.name} is live`, `Class is now in progress.`);
       }
+    });
 
-      const targetClass = todaysClasses.find(c => 
-        currentTime >= (c.start - 0.25) && currentTime < c.end
-      );
+    const targetClass = todaysClasses.find(c => currentTime >= c.start - 0.25 && currentTime < c.end);
 
-      if (targetClass) {
-        activeUrl = targetClass.url;
-        const isEarly = currentTime < targetClass.start;
-        titleEl.innerText = targetClass.name;
-        statusEl.innerHTML = isEarly ? `Starts at ${formatTime(targetClass.start)}.<br>Auto-joining soon...` : `Class is in progress!`;
-        btnEl.innerHTML = "🚀 Join Now";
-        btnEl.className = "px-10 py-4 bg-green-500 hover:bg-green-600 border border-green-400 rounded-xl transition transform hover:scale-105 active:scale-95 font-bold shadow-xl text-lg w-full";
+    if (targetClass) {
+      const color = colorFor(targetClass.name);
+      activeUrl = targetClass.url;
+      const isEarly = currentTime < targetClass.start;
+      titleEl.innerText = targetClass.name;
+      badgeEl.className = `inline-block w-3 h-3 rounded-full mr-2 ${color.dot}`;
+      statusEl.innerHTML = isEarly
+        ? `Starts at ${formatTime(targetClass.start)}.<br>Auto-joining soon...`
+        : `Class is in progress!`;
+      btnEl.innerHTML = "🚀 Join Now";
+      btnEl.className = "px-10 py-4 bg-green-500 hover:bg-green-600 border border-green-400 rounded-xl transition transform hover:scale-105 active:scale-95 font-bold shadow-xl text-lg w-full";
 
-        if (!isRedirecting) {
-          isRedirecting = true;
-          setTimeout(() => { if (activeUrl) window.location.href = activeUrl; }, 5000);
-        }
+      if (!isRedirecting) {
+        isRedirecting = true;
+        setTimeout(() => { if (activeUrl) window.location.href = activeUrl; }, 5000);
+      }
+    } else {
+      activeUrl = null;
+      isRedirecting = false;
 
+      const nextToday = todaysClasses.filter(c => currentTime < c.start).sort((a, b) => a.start - b.start)[0];
+
+      if (nextToday) {
+        const color = colorFor(nextToday.name);
+        fallbackUrl = nextToday.url;
+        titleEl.innerText = nextToday.name;
+        badgeEl.className = `inline-block w-3 h-3 rounded-full mr-2 ${color.dot}`;
+        statusEl.innerHTML = `Today at ${formatTime(nextToday.start)}.`;
+        btnEl.innerHTML = "🔗 Join Manually";
+        btnEl.className = "px-8 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl transition transform hover:scale-105 active:scale-95 font-medium w-full";
       } else {
-        activeUrl = null;
-        isRedirecting = false;
-        
-        const nextToday = todaysClasses.filter(c => currentTime < c.start).sort((a, b) => a.start - b.start)[0];
+        fallbackUrl = null;
+        badgeEl.className = "hidden";
+        titleEl.innerText = "No Classes Today";
+        btnEl.innerHTML = "🔄 Refresh Status";
+        btnEl.className = "px-8 py-3 bg-white/10 opacity-50 border border-white/10 rounded-xl transition w-full";
 
-        if (nextToday) {
-          fallbackUrl = nextToday.url;
-          titleEl.innerText = nextToday.name;
-          statusEl.innerHTML = `Today at ${formatTime(nextToday.start)}.`;
-          btnEl.innerHTML = "🔗 Join Manually";
-          btnEl.className = "px-8 py-3 bg-white/20 hover:bg-white/30 border border-white/30 rounded-xl transition transform hover:scale-105 active:scale-95 font-medium w-full";
+        const upcoming = sortedClasses().filter(c => c.date > todayStr);
+        if (upcoming.length > 0) {
+          const next = upcoming[0];
+          const nextDateObj = new Date(next.date + "T00:00:00");
+          const todayObj = new Date(todayStr + "T00:00:00");
+          const diffDays = Math.ceil(Math.abs(nextDateObj - todayObj) / (1000 * 60 * 60 * 24));
+          statusEl.innerHTML = `Next: ${next.name} in ${diffDays} day${diffDays > 1 ? "s" : ""},<br><span class="text-sm opacity-60">${formatDateLabel(next.date)}</span>`;
         } else {
-          // No classes left today, find the next available day in the entire schedule
-          fallbackUrl = null;
-          titleEl.innerText = "No Classes Today";
-          btnEl.innerHTML = "🔄 Refresh Status";
-          btnEl.className = "px-8 py-3 bg-white/10 opacity-50 border border-white/10 rounded-xl transition w-full";
-
-          // Scan for the next chronological date
-          let upcomingDays = Object.keys(schedule)
-            .map(k => k.split('_')[0]) // remove the _2 suffix
-            .filter(d => d > todayStr)
-            .sort();
-
-          if (upcomingDays.length > 0) {
-            const nextDateStr = upcomingDays[0];
-            const nextDateObj = new Date(nextDateStr);
-            const todayObj = new Date(todayStr);
-            const diffTime = Math.abs(nextDateObj - todayObj);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            statusEl.innerHTML = `Next class after ${diffDays} day${diffDays > 1 ? 's' : ''},<br><span class="text-sm opacity-60">(${nextDateStr})</span>`;
-          } else {
-            statusEl.innerText = "All scheduled sessions are finished.";
-          }
+          statusEl.innerText = "All scheduled sessions are finished.";
         }
       }
     }
 
-    function handleBtnClick() {
-      const targetUrl = activeUrl || fallbackUrl;
-      if (targetUrl) {
-        window.open(targetUrl, '_blank');
-      } else {
-        checkClass();
-      }
+    renderWeeklyList(todayStr, currentTime);
+  }
+
+  function renderWeeklyList(todayStr, currentTime) {
+    const container = document.getElementById("weeklyList");
+    if (!container) return;
+
+    const sevenDaysOut = new Date(todayStr + "T00:00:00");
+    sevenDaysOut.setDate(sevenDaysOut.getDate() + 7);
+    const cutoffStr = sevenDaysOut.toISOString().split("T")[0];
+
+    const upcoming = sortedClasses().filter(c =>
+      (c.date > todayStr || (c.date === todayStr && currentTime < c.end)) && c.date <= cutoffStr
+    );
+
+    if (upcoming.length === 0) {
+      container.innerHTML = `<p class="text-sm text-center opacity-50 py-4">No classes in the next 7 days.</p>`;
+      return;
     }
 
-    window.onload = () => {
+    container.innerHTML = upcoming.map(c => {
+      const color = colorFor(c.name);
+      const isToday = c.date === todayStr;
+      const isLive = isToday && currentTime >= c.start && currentTime < c.end;
+      const isSoon = isToday && !isLive && currentTime >= c.start - 0.25 && currentTime < c.start;
+
+      let statusTag = formatDateLabel(c.date);
+      if (isLive) statusTag = "🟢 Live now";
+      else if (isSoon) statusTag = "🟡 Starting soon";
+      else if (isToday) statusTag = "Today";
+
+      return `
+        <div class="flex items-center justify-between gap-3 bg-white/10 hover:bg-white/15 transition rounded-xl px-4 py-3 ${isLive ? "ring-2 ring-green-400" : ""}">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-2.5 h-2.5 rounded-full ${color.dot} shrink-0"></span>
+            <div class="min-w-0 text-left">
+              <div class="font-semibold truncate">${c.name}</div>
+              <div class="text-xs opacity-60">${statusTag} · ${formatTime(c.start)} – ${formatTime(c.end)}</div>
+            </div>
+          </div>
+          <a href="${c.url}" target="_blank" class="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg ${color.bg} hover:opacity-90 transition">
+            Join
+          </a>
+        </div>`;
+    }).join("");
+  }
+
+  function updateClock() {
+    const ktmDate = getKathmanduTime();
+    const timeString = ktmDate.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    document.getElementById("clock").innerText = timeString;
+    if (ktmDate.getSeconds() % 5 === 0) {
       checkClass();
-      updateClock();
-      setInterval(updateClock, 1000);
-    };
-  </script>
+    }
+  }
+
+  function handleBtnClick() {
+    const targetUrl = activeUrl || fallbackUrl;
+    if (targetUrl) {
+      window.open(targetUrl, "_blank");
+    } else {
+      checkClass();
+    }
+  }
+
+  window.onload = () => {
+    checkClass();
+    updateClock();
+    setInterval(updateClock, 1000);
+    updateToggleButtons();
+  };
+</script>
 </head>
 
 <body class="flex items-center justify-center min-h-screen text-white p-4">
 
-  <div class="bg-white/10 backdrop-blur-lg p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-md w-full animate-fade-in border border-white/20">
-    
+  <div class="bg-white/10 backdrop-blur-lg p-6 md:p-10 rounded-3xl shadow-2xl text-center max-w-md w-full animate-fade-in border border-white/20">
+
     <div id="clock" class="text-3xl font-mono mb-2 opacity-90 tracking-widest text-yellow-200">00:00:00</div>
-    <div class="text-[10px] uppercase tracking-[0.3em] opacity-50 mb-8">Kathmandu Time (NPT)</div>
+    <div class="text-[10px] uppercase tracking-[0.3em] opacity-50 mb-6">Kathmandu Time (NPT)</div>
 
-    <div class="text-6xl mb-4">🗓️</div>
-    
-    <h1 id="mainTitle" class="text-4xl font-extrabold mb-6 tracking-tight">Class Portal</h1>
-    
-    <div class="min-h-[80px] flex items-center justify-center">
-      <p id="status" class="text-xl leading-relaxed opacity-95 text-white/80">
-        Syncing schedule...
-      </p>
+    <div class="text-5xl mb-3">🗓️</div>
+
+    <h1 class="text-3xl font-extrabold mb-4 tracking-tight flex items-center justify-center">
+      <span id="mainBadge" class="hidden"></span>
+      <span id="mainTitle">Class Portal</span>
+    </h1>
+
+    <div class="min-h-[70px] flex items-center justify-center">
+      <p id="status" class="text-lg leading-relaxed opacity-95 text-white/80">Syncing schedule...</p>
     </div>
 
-    <div class="mt-8">
-      <button id="actionBtn" onclick="handleBtnClick()">
-        🔗 Join Manually
-      </button>
+    <div class="mt-6">
+      <button id="actionBtn" onclick="handleBtnClick()">🔗 Join Manually</button>
     </div>
 
-    <div class="mt-8 flex flex-col gap-2">
-        <p class="text-[10px] opacity-40 uppercase tracking-widest">Auto-joins 15m before start</p>
-        <p class="text-[10px] opacity-40 uppercase tracking-widest text-yellow-100">Opens in a new tab</p>
+    <div class="mt-5 flex gap-2">
+      <button id="notifBtn" onclick="requestNotifications()" class="flex-1 text-xs px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition">🔕 Enable Notifications</button>
+      <button id="soundBtn" onclick="enableSound()" class="flex-1 text-xs px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition">🔈 Enable Sound</button>
+    </div>
+
+    <div class="mt-3 flex flex-col gap-1">
+      <p class="text-[10px] opacity-40 uppercase tracking-widest">Auto-joins 15m before start</p>
+    </div>
+
+    <div class="mt-8 text-left">
+      <h2 class="text-sm font-semibold uppercase tracking-widest opacity-60 mb-3">Next 7 Days</h2>
+      <div id="weeklyList" class="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1"></div>
     </div>
 
   </div>
